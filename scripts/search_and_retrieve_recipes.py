@@ -10,72 +10,137 @@ search_and_retrieve_recipes.py
 4. CLI 互動式輸入，並以自訂格式列印結果（不含預覽標籤）
 
 使用前請安裝依賴：
-$ pip install pandas numpy sentence-transformers
+$ pip install pandas numpy sentence-transformers googlesearch-python jieba
 
 執行：
 $ python search_and_retrieve_recipes.py
 """
 import json
 import os
+import re
 import subprocess
+import textwrap
 from collections import defaultdict
+from typing import Dict, List
 
+import jieba
 import numpy as np
 import pandas as pd
-# from integrate_recipes import get_recipe_by_id
+from googlesearch import search  # pip install googlesearch-python
 from sentence_transformers import SentenceTransformer
 
-# 取得當前腳本目錄及上層目錄
-# 可調整分類
+# -------------------- 專案路徑 --------------------
 category = "九層塔"
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
-tags_path   = os.path.join(ROOT_DIR, "data", "embeddings", category, "tags.json")
-embed_path  = os.path.join(ROOT_DIR, "data", "embeddings", category, "embeddings.npy")
-cleaned_path   = os.path.join(ROOT_DIR, "data", "clean", category, f"{category}_recipes_cleaned.csv")
-preview_path   = os.path.join(ROOT_DIR, "data", "clean", category, f"{category}_preview_ingredients.csv")
-detailed_path  = os.path.join(ROOT_DIR, "data", "clean", category, f"{category}_detailed_ingredients.csv")
-steps_path     = os.path.join(ROOT_DIR, "data", "clean", category, f"{category}_recipe_steps.csv")
+# -------------------- 檔案路徑 --------------------
+tags_path = os.path.join(ROOT_DIR, "data", "embeddings", category, "tags.json")
+embed_path = os.path.join(ROOT_DIR, "data", "embeddings", category, "embeddings.npy")
+cleaned_path = os.path.join(
+    ROOT_DIR, "data", "clean", category, f"{category}_recipes_cleaned.csv"
+)
+preview_path = os.path.join(
+    ROOT_DIR, "data", "clean", category, f"{category}_preview_ingredients.csv"
+)
+detailed_path = os.path.join(
+    ROOT_DIR, "data", "clean", category, f"{category}_detailed_ingredients.csv"
+)
+steps_path = os.path.join(
+    ROOT_DIR, "data", "clean", category, f"{category}_recipe_steps.csv"
+)
 
-
-# 一次載入 embeddings、tags、模型
+# -------------------- 載入向量與模型 --------------------
 with open(tags_path, "r", encoding="utf-8") as f:
     tags = json.load(f)
 embeddings = np.load(embed_path)
 model = SentenceTransformer("BAAI/bge-m3")
 emb_norms = np.linalg.norm(embeddings, axis=1)
 
-# 建立 id2tags: id -> set(tag)
+# 建立 id -> set(tag)
 id2tags = defaultdict(set)
 for item in tags:
     id2tags[item["id"]].add(item["tag"])
 
-# 載入食譜資料
+# -------------------- 載入食譜資料 --------------------
 print("載入清理後的食譜資料...")
-# recipes_cleaned.csv 使用分號分隔
-try:
-    df_cleaned = pd.read_csv(cleaned_path, sep=";", encoding="utf-8-sig")
-    df_cleaned.columns = df_cleaned.columns.str.strip()
-except Exception as e:
-    print(f"讀取 {cleaned_path} 失敗：{e}")
-    raise
+df_cleaned = pd.read_csv(cleaned_path, sep=";", encoding="utf-8-sig")
+df_cleaned.columns = df_cleaned.columns.str.strip()
+df_preview = pd.read_csv(preview_path, encoding="utf-8-sig").rename(
+    columns=lambda x: x.strip()
+)
+df_detailed = pd.read_csv(detailed_path, encoding="utf-8-sig").rename(
+    columns=lambda x: x.strip()
+)
+df_steps = pd.read_csv(steps_path, encoding="utf-8-sig").rename(
+    columns=lambda x: x.strip()
+)
 
-# 其他 CSV 為逗號分隔
-try:
-    df_preview = pd.read_csv(preview_path, encoding="utf-8-sig").rename(
-        columns=lambda x: x.strip()
-    )
-    df_detailed = pd.read_csv(detailed_path, encoding="utf-8-sig").rename(
-        columns=lambda x: x.strip()
-    )
-    df_steps = pd.read_csv(steps_path, encoding="utf-8-sig").rename(
-        columns=lambda x: x.strip()
-    )
-except Exception as e:
-    print(f"讀取預覽/詳細/步驟檔案失敗：{e}")
-    raise
+# ==============================================================
+#  ★★★ 新增區塊 1：準備「食材字典」 ★★★
+# ==============================================================
+
+
+def build_ingredient_set(df_preview: pd.DataFrame, df_detailed: pd.DataFrame) -> set:
+    """從 preview_tag 與 ingredient_name 兩欄組成去重後的食材集合"""
+    tags_set = set()
+    # preview_tag 以逗號分隔
+    for line in df_preview["preview_tag"]:
+        tags_set.update(t.strip() for t in str(line).split(",") if t.strip())
+    # detailed_ingredients
+    tags_set.update(df_detailed["ingredient_name"].astype(str).str.strip())
+    # 去空、去純數字
+    return {t for t in tags_set if t and not re.fullmatch(r"\d+", t)}
+
+
+# ★ 在 build_ingredient_set 定義之後、main loop 之前加上 ↓↓↓
+ING_SET: set[str] = build_ingredient_set(df_preview, df_detailed)
+
+# 把所有食材加進 Jieba 自訂字典，讓斷詞能一次切出完整詞
+for w in ING_SET:
+    jieba.add_word(w)
+
+print(f"食材字典大小：{len(ING_SET)}")
+
+# ==============================================================
+#  ★★★ 新增區塊 2：關鍵字抽取函式 ★★★
+# ==============================================================
+
+LLM_PROMPT = """你是食材抽取助手，只回 JSON 陣列。從句子中找出食材名稱（只要名稱），依序輸出：
+---
+{text}
+---"""
+
+
+def jieba_extract(text: str) -> List[str]:
+    """用 Jieba 斷詞後過白名單"""
+    clean = re.sub(r"[^\w\u4e00-\u9fff]+", " ", text)
+    tokens = jieba.lcut(clean, cut_all=False)
+    return [ing for ing in ING_SET if ing in text]
+
+
+def llm_extract(text: str, model_name: str = "qwen3:4b-q4_K_M") -> List[str]:
+    """呼叫 Ollama 模型抽取關鍵字（後援）"""
+    prompt = LLM_PROMPT.format(text=text)
+    res = subprocess.run(
+        ["ollama", "run", model_name, prompt],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    ).stdout
+    try:
+        items = json.loads(res)
+    except json.JSONDecodeError:
+        items = re.split(r"[，,]\s*", res)
+    # 只留字典內詞
+    return [i.strip() for i in items if i.strip() in ING_SET]
+
+
+def pull_ingredients(user_text: str) -> List[str]:
+    """先用 Jieba，比對不到再用 LLM；回傳食材清單"""
+    words = jieba_extract(user_text)
+    return words if words else llm_extract(user_text)
+
 
 def get_recipe_by_id(recipe_id, dfs):
     """
@@ -244,14 +309,13 @@ def call_ollama_llm(
 
     # 推薦型 prompt，明確指令 LLM「請列出推薦名單、簡介與推薦理由」
     prompt = (
-        f"以下是好幾道料理食譜的資訊：\n{context_text}\n\n"
+        f"以下是料理食譜的資訊：\n{context_text}\n\n"
         f"請扮演一位料理專家，根據這些食譜資訊，"
-        f"推薦最適合『{user_query}』這個需求的料理，"
-        f"請列出推薦食譜的名稱，簡單描述內容與推薦理由。\n"
+        f"用20字描述內容。\n"
         f"請在每道料理標題後標註其 ID（如：台式羅勒燒雞 (ID: 474705)），以便用戶後續查詢。\n"
-        f"如果都很適合，可以用條列式分別推薦，每道請簡明說明為什麼推薦。\n"
+        f"將所有食譜條列式分別描述內容。\n"
         f"回覆請直接進入主題，不需討論分析過程。\n"
-        f"只能從下列提供的食譜中推薦。\n"
+        f"只能從下列提供的食譜中描述內容。\n"
         f"若發現內容重複，請合併為一條並只列一次。\n"
         f"請用繁體中文回答。"
     )
@@ -267,6 +331,59 @@ def call_ollama_llm(
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
         return f"Ollama 發生錯誤：{e.stderr.strip()}"
+
+
+def google_search_recipes(keyword: str, k: int = 5) -> List[Dict]:
+    """
+    後備 Google 搜尋：在使用者輸入的文字後面自動加上「食譜」二字，
+    並取回前 k 筆結果。
+    回傳格式：[{ 'title': ..., 'link': ..., 'snippet': ... }, ...]
+    """
+    query = f"{keyword} 食譜"
+    results = []
+    for item in search(query, advanced=True, num_results=k, lang="zh-tw"):
+        results.append(
+            {"title": item.title, "link": item.url, "snippet": item.description}
+        )
+    return results
+
+
+def summarize_search_results(
+    user_query: str, results: list, model: str = "qwen3:4b-q4_K_M"
+) -> str:
+    """把多筆搜尋結果交給 LLM，請它用繁體中文歸納回答"""
+    blocks = []
+    for r in results:
+        blocks.append(f"【{r['title']}】\n{r['snippet']}\nLink: {r['link']}")
+    context = "\n\n---\n\n".join(blocks)
+
+    prompt = textwrap.dedent(
+        f"""\
+        你將獲得來自 Google 搜尋「{user_query} 食譜」的結果摘要（如下 %%% 所示），請依據**僅提供的資訊**產出條列式清單。
+
+        ✅ 每筆輸出請嚴格遵循以下格式（用全形逗號分隔）：
+        網頁標題，全形逗號，20 字左右的簡介，全形逗號，原始網址
+
+        ⚠️ 請注意：
+        1. **只能基於提供的資訊內容回答，不得推論或自行補充**
+        2. 每則簡介**長度約為 20 字（18～22 字內）**
+        3. 結果以條列清單形式呈現，每筆結果獨立一行
+        4. 請全程使用**繁體中文**
+        5. 網址請保持原樣，不可修改或省略
+
+        %%%
+        {context}
+        %%%
+        """
+    )
+
+    res = subprocess.run(
+        ["ollama", "run", model, prompt],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    return res.stdout.strip()
 
 
 def pretty_print(item: dict):
@@ -294,44 +411,64 @@ def pretty_print(item: dict):
 
 
 if __name__ == "__main__":
-    print("RAG智能推薦查詢（僅支援 OR 部分關鍵字查詢，輸入 exit 離開）")
+    print("RAG 智能推薦查詢（輸入任何中文描述；exit 離開）")
 
     while True:
-        query = input("\n請輸入查詢食材或需求: ").strip()
-        if query.lower() in ("exit", "quit"):
+        raw_input_text = input("\n請描述你有的食材或需求: ").strip()
+        if raw_input_text.lower() in ("exit", "quit"):
             break
 
-        # 只支援 OR 查詢
+        # 1) 先抽取食材關鍵字
+        keywords = pull_ingredients(raw_input_text)
+        if not keywords:
+            print("⚠️ 未偵測到任何可用食材，改為網路搜尋模式…")
+            # 直接做 Google 後備
+            web_hits = google_search_recipes(raw_input_text, k=5)
+            if not web_hits:
+                print("🚫 Google 無結果，請嘗試其他關鍵字。")
+                continue
+            summary = summarize_search_results(raw_input_text, web_hits)
+            print("🌐 來自 Google 的推薦：\n" + summary + "\n")
+            # open_choice = input("要在瀏覽器開啟第一筆結果嗎？(y/n): ").strip().lower()
+            # if open_choice == "y":
+            #     import webbrowser
+
+            #     webbrowser.open(web_hits[0]["link"])
+            continue
+
+        # 2) 有抽到關鍵字，就用本地 OR 檢索
+        query = ", ".join(keywords)
         res = search_by_partial_ingredients(query, top_k=3)
 
+        # 3) 如果本地查無結果，再跑 Google 後備
         if not res:
-            print("\n找不到相關食譜。")
+            print("⚠️ 本地資料庫查無結果，嘗試網路搜尋…")
+            web_hits = google_search_recipes(query, k=5)
+            if not web_hits:
+                print("🚫 Google 無結果，請嘗試其他關鍵字。")
+                continue
+            summary = summarize_search_results(query, web_hits)
+            print("🌐 來自 Google 的推薦：\n" + summary + "\n")
+            # open_choice = input("要在瀏覽器開啟第一筆結果嗎？(y/n): ").strip().lower()
+            # if open_choice == "y":
+            #     import webbrowser
 
-            choice = input("是否要使用瀏覽器搜尋？(y/n): ").strip().lower()
-            if choice == "y":
-                import webbrowser
-
-                query_url = f"https://www.google.com/search?q={query}+食譜"
-                webbrowser.open(query_url)
-                print(f"🔍 已在瀏覽器中搜尋：「{query} 食譜」")
-            else:
-                print("您可以嘗試其他關鍵字。\n")
-
+            #     webbrowser.open(web_hits[0]["link"])
             continue
 
         print("\n正在自動推薦最適合的食譜...\n")
         answer = call_ollama_llm(query, res)
         print("🧠 智能推薦：\n" + answer + "\n")
 
-        # 🔔 加入明確指引提示
         print(
-            "🔍 若想查看其中一道食譜的【詳細食材與步驟】，請輸入該食譜『名稱關鍵字』或該食譜的 ID"
+            "🔍 若想查看其中一道食譜的【詳細食材與步驟】，"
+            "請輸入該食譜『名稱關鍵字』或該食譜的 ID"
         )
         print("✏️ 若想重新查詢其他食材，請輸入 new；離開請輸入 exit。")
 
-        # 構建名稱 → ID 對照
         name_map = {r["recipe"]["食譜名稱"]: r["id"] for r in res}
         id_set = set(r["id"] for r in res)
+        selected_id = None
 
         while True:
             follow_up = input(
@@ -342,7 +479,6 @@ if __name__ == "__main__":
             if follow_up.lower() in ("new", ""):
                 break
 
-            # 比對數字編號
             if follow_up.isdigit() and int(follow_up) in id_set:
                 selected_id = int(follow_up)
             else:
@@ -353,7 +489,8 @@ if __name__ == "__main__":
 
             if selected_id:
                 recipe = get_recipe_by_id(
-                    selected_id, (df_cleaned, df_preview, df_detailed, df_steps)
+                    selected_id,
+                    (df_cleaned, df_preview, df_detailed, df_steps),
                 )
                 if recipe:
                     pretty_print({"id": selected_id, "score": 1.0, "recipe": recipe})
