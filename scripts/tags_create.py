@@ -1,6 +1,6 @@
 import json
 import subprocess
-
+import re
 import pandas as pd
 from tqdm import tqdm
 
@@ -19,10 +19,17 @@ ingr_col = "詳細食材"
 # 2. 定義系統提示（system prompt）
 system_prompt = (
     "你是一個菜譜分類器，僅能二選一：素食 或 葷食。\n"
+    "遇到這些蔬菜要判斷葷食:蔥 , 蒜 , 韭菜 , 洋蔥 "
     "請**只**回傳「素食」或「葷食」兩字，"
     "不要任何多餘文字、思考過程、解釋或引號。"
 )
-
+def extract_label(text: str) -> str:
+    """
+    从模型输出里抽取最后一个出现的“素食”或“葷食”。
+    如果都没找到，就返回空串。
+    """
+    matches = re.findall(r"(素食|葷食)", text)
+    return matches[-1] if matches else ""
 
 def classify_with_ollama(recipe_id: str, ingredients: str) -> str:
     user_prompt = f"食譜 ID：{recipe_id}\n食材列表：{ingredients}"
@@ -43,7 +50,11 @@ def classify_with_ollama(recipe_id: str, ingredients: str) -> str:
         return ""
 
     # 这里 proc.stdout 一定是 str，不会再是 None
-    return proc.stdout.strip()
+    raw = proc.stdout.strip()
+    label = extract_label(raw)
+    if not label:
+        print(f"[WARN] 无法从模型输出中找到标签，原始输出：{raw!r}")
+    return label
 
 
 # 3. 逐行執行分類並存回 DataFrame
@@ -66,7 +77,7 @@ for _, row in out_df.iterrows():
 
 # 4b. （可選）存成純兩欄、無表頭、空格分隔的檔案
 out_df.to_csv(
-    "data/clean/九層塔/九層塔_id_and_classification.txt",
+    "data/clean/九層塔/九層塔_id_and_classification.csv",
     index=False,
     header=False,  # 不輸出欄名
     sep=" ",
