@@ -22,44 +22,70 @@ import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
-# 設定蔬菜名稱 
-category = "高麗菜"   # 要處理哪個蔬菜資料夾？（高麗菜就填"高麗菜"）
-
-# 設定輸入與輸出路徑
-INPUT_CSV = f"data/clean/{category}/{category}_preview_ingredients.csv"  # 原始 CSV 檔案，需包含 id 與 preview_tag 欄
-OUTPUT_DIR = f"data/embeddings/{category}"  # 儲存向量與對應 id、標籤的資料夾
+# 掃描所有已清理的蔬菜資料夾
+INPUT_ROOT = "data/clean"  # 根目錄下每個子資料夾皆為一種 vege_name
+OUTPUT_DIR = (
+    "data/embeddings"  # 最終只會在這裡放三個檔案：tags.json, embeddings.npy, index.json
+)
 TAGS_JSON = "tags.json"  # 儲存 id 與標籤對應的 JSON
 EMBEDDINGS_NPY = "embeddings.npy"  # 儲存 embedding 陣列的 NumPy 檔案
+INDEX_JSON = "index.json"
 MODEL_NAME = "BAAI/bge-m3"  # 向量化模型，可依需求替換
 
 
 def main():
-    # 1. 讀取 CSV，保留 id 與 preview_tag 並去重
-    df = pd.read_csv(INPUT_CSV, encoding="utf-8-sig")
-    df = df[["id", "preview_tag"]].drop_duplicates()
+    # 1. 掃描所有子資料夾，讀取並合併每個 vege 的 preview_tags
+    all_ids, all_tags, all_veges = [], [], []
+    index_map = {}
+    start_idx = 0
 
-    # 2. 擷取標籤與對應 id 的列表
-    ids = df["id"].tolist()
-    tags = df["preview_tag"].tolist()
+    for vege in sorted(os.listdir(INPUT_ROOT)):
+        vege_dir = os.path.join(INPUT_ROOT, vege)
+        csv_path = os.path.join(vege_dir, f"{vege}_preview_ingredients.csv")
+        if not os.path.isfile(csv_path):
+            continue
 
-    # 3. 初始化向量化模型並產生 embeddings
+        df = pd.read_csv(csv_path, encoding="utf-8-sig")[
+            ["id", "preview_tag"]
+        ].drop_duplicates()
+        ids = df["id"].tolist()
+        tags = df["preview_tag"].tolist()
+
+        # 記錄 indexmap 的 start & length
+        length = len(tags)
+        index_map[vege] = {"start": start_idx, "length": length}
+        start_idx += length
+
+        all_ids.extend(ids)
+        all_tags.extend(tags)
+        all_veges.extend([vege] * length)
+
+    # 2. 一次性載入模型並對所有標籤做向量化
     print(f"加載模型: {MODEL_NAME}")
     model = SentenceTransformer(MODEL_NAME)
-    print(f"開始向量化 {len(tags)} 個標籤...")
-    embeddings = model.encode(tags, show_progress_bar=True)
+    print(f"開始向量化 {len(all_tags)} 個標籤...")
+    embeddings = model.encode(all_tags, show_progress_bar=True)
 
-    # 4. 建立輸出資料夾
+    # 3. 建立輸出資料夾（不分子資料夾）
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # 5. 儲存 id 與標籤對應清單 (JSON)
-    entries = [{"id": id_, "tag": tag_} for id_, tag_ in zip(ids, tags)]
+    # 4. 儲存所有 id/tag/vege_name 對應清單 (全域 JSON)
+    entries = [
+        {"id": _id, "tag": _tag, "vege_name": _v}
+        for _id, _tag, _v in zip(all_ids, all_tags, all_veges)
+    ]
     with open(os.path.join(OUTPUT_DIR, TAGS_JSON), "w", encoding="utf-8") as f:
         json.dump(entries, f, ensure_ascii=False, indent=2)
     print(f"已儲存標籤對應檔: {os.path.join(OUTPUT_DIR, TAGS_JSON)}")
 
-    # 6. 儲存 embeddings 陣列 (NumPy)
+    # 5. 儲存所有 embeddings (單一 .npy)
     np.save(os.path.join(OUTPUT_DIR, EMBEDDINGS_NPY), embeddings)
     print(f"已儲存 embeddings 檔: {os.path.join(OUTPUT_DIR, EMBEDDINGS_NPY)}")
+
+    # 6. 儲存 index.json
+    with open(os.path.join(OUTPUT_DIR, INDEX_JSON), "w", encoding="utf-8") as f:
+        json.dump(index_map, f, ensure_ascii=False, indent=2)
+    print(f"已儲存索引檔: {os.path.join(OUTPUT_DIR, INDEX_JSON)}")
 
     print("所有向量化流程完成！")
 

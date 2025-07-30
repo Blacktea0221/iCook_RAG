@@ -26,9 +26,9 @@ def clean_whitespace(df):
 
 
 # 4. 新增分類欄位：從檔名擷取食材名稱
-def add_category_column(df, filename):
-    category = os.path.basename(filename).split("_")[0]
-    df["category"] = category
+def add_vege_name_column(df, filename):
+    vege_name = os.path.basename(filename).split("_")[0]
+    df["vege_name"] = vege_name
     return df
 
 
@@ -50,10 +50,10 @@ def process_preview_list(df):
 
 
 # 6. 輸出 Preview Ingredients 表格
-def save_preview_table(df, category, output_dir):
+def save_preview_table(df, vege_name, output_dir):
     if "preview_list" in df.columns:
         prev = (
-            df[["id", "category", "preview_list"]]
+            df[["id", "vege_name", "preview_list"]]
             .explode("preview_list")
             .rename(columns={"preview_list": "preview_tag"})
         )
@@ -68,14 +68,14 @@ def save_preview_table(df, category, output_dir):
 
         os.makedirs(output_dir, exist_ok=True)
         prev.to_csv(
-            os.path.join(output_dir, f"{category}_preview_ingredients.csv"),
+            os.path.join(output_dir, f"{vege_name}_preview_ingredients.csv"),
             index=False,
             encoding="utf-8-sig",
         )
 
 
 # 7. 處理詳細食材：切分、展平、解析數量與單位
-def process_ingredients_table(df, category, output_dir):
+def process_ingredients_table(df, vege_name, output_dir):
     if "詳細食材" not in df.columns:
         return
 
@@ -243,14 +243,14 @@ def process_ingredients_table(df, category, output_dir):
     # 7. 輸出
     os.makedirs(output_dir, exist_ok=True)
     result.to_csv(
-        os.path.join(output_dir, f"{category}_detailed_ingredients.csv"),
+        os.path.join(output_dir, f"{vege_name}_detailed_ingredients.csv"),
         index=False,
         encoding="utf-8-sig",
     )
 
 
 # 8. 處理做法步驟：拆分、展平、去除編號符號、編號步驟
-def process_steps_table(df, category, output_dir):
+def process_steps_table(df, vege_name, output_dir):
     if "做法" in df.columns:
         df["steps_list"] = df["做法"].str.split(r"[。\.；;、/\\n]")
         steps = (
@@ -270,14 +270,14 @@ def process_steps_table(df, category, output_dir):
         # 儲存至 CSV
         os.makedirs(output_dir, exist_ok=True)
         steps.to_csv(
-            os.path.join(output_dir, f"{category}_recipe_steps.csv"),
+            os.path.join(output_dir, f"{vege_name}_recipe_steps.csv"),
             index=False,
             encoding="utf-8-sig",
         )
 
 
 # 9. 輸出最終清理後的完整食譜，並刪除原始文字欄與中繼欄
-def save_cleaned_recipes(df, category, output_dir):
+def save_cleaned_recipes(df, vege_name, output_dir):
     # 刪掉原始「預覽食材」「詳細食材」「做法」以及中間產物 list 欄
     cols_to_drop = [
         "預覽食材",
@@ -286,20 +286,21 @@ def save_cleaned_recipes(df, category, output_dir):
         "preview_list",
         "ingredients_list",
         "steps_list",
+        "網址",
     ]
-    # 1. 先把原本的 category 从列列表里去除
-    save_cols = [c for c in df.columns if c not in cols_to_drop + ["category"]]
+    # 1. 先把原本的 vege_name 从列列表里去除
+    save_cols = [c for c in df.columns if c not in cols_to_drop + ["vege_name"]]
 
-    # 2. 再在食譜名稱前插入 category
+    # 2. 再在食譜名稱前插入 vege_name
     save_cols.insert(
         save_cols.index("食譜名稱"),
-        "category",
+        "vege_name",
     )
 
     # 3. 按新顺序输出
     os.makedirs(output_dir, exist_ok=True)
     df[save_cols].to_csv(
-        os.path.join(output_dir, f"{category}_recipes_cleaned.csv"),
+        os.path.join(output_dir, f"{vege_name}_recipes_cleaned.csv"),
         index=False,
         encoding="utf-8-sig",
         sep=";",
@@ -309,13 +310,13 @@ def save_cleaned_recipes(df, category, output_dir):
 # 主流程
 def main():
     input_dir = "test"  # 原始 CSV 檔案資料夾
-    output_dir = "./data\clean"  # 清理後檔案輸出資料夾
+    output_dir = "./data/clean"  # 清理後檔案輸出資料夾
 
     for filename in os.listdir(input_dir):
         if not filename.endswith(".csv"):
             continue
         filepath = os.path.join(input_dir, filename)
-        category = os.path.splitext(filename)[0].split("_")[0]
+        vege_name = os.path.splitext(filename)[0].split("_")[0]
 
         # 讀取原始資料
         df = pd.read_csv(filepath, sep=";", encoding="utf-8-sig")
@@ -324,17 +325,17 @@ def main():
         df = clean_column_names(df)
         df = drop_duplicates(df)
         df = clean_whitespace(df)
-        df = add_category_column(df, filename)
+        df = add_vege_name_column(df, filename)
         df = process_preview_list(df)
 
         # 輸出各表        # 新增：每个类别一个子目录
-        category_dir = os.path.join(output_dir, category)
-        os.makedirs(category_dir, exist_ok=True)
+        vege_name_dir = os.path.join(output_dir, vege_name)
+        os.makedirs(vege_name_dir, exist_ok=True)
 
-        save_preview_table(df, category, category_dir)
-        process_ingredients_table(df, category, category_dir)
-        process_steps_table(df, category, category_dir)
-        save_cleaned_recipes(df, category, category_dir)
+        save_preview_table(df, vege_name, vege_name_dir)
+        process_ingredients_table(df, vege_name, vege_name_dir)
+        process_steps_table(df, vege_name, vege_name_dir)
+        save_cleaned_recipes(df, vege_name, vege_name_dir)
 
     print("資料清整完成，結果已輸出至：", output_dir)
 
