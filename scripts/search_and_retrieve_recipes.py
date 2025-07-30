@@ -30,24 +30,24 @@ from googlesearch import search  # pip install googlesearch-python
 from sentence_transformers import SentenceTransformer
 
 # -------------------- 專案路徑 --------------------
-category = "九層塔"
+vege_name = "九層塔"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
 # -------------------- 檔案路徑 --------------------
-tags_path = os.path.join(ROOT_DIR, "data", "embeddings", category, "tags.json")
-embed_path = os.path.join(ROOT_DIR, "data", "embeddings", category, "embeddings.npy")
+tags_path = os.path.join(ROOT_DIR, "data", "embeddings", vege_name, "tags.json")
+embed_path = os.path.join(ROOT_DIR, "data", "embeddings", vege_name, "embeddings.npy")
 cleaned_path = os.path.join(
-    ROOT_DIR, "data", "clean", category, f"{category}_recipes_cleaned.csv"
+    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_recipes_cleaned.csv"
 )
 preview_path = os.path.join(
-    ROOT_DIR, "data", "clean", category, f"{category}_preview_ingredients.csv"
+    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_preview_ingredients.csv"
 )
 detailed_path = os.path.join(
-    ROOT_DIR, "data", "clean", category, f"{category}_detailed_ingredients.csv"
+    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_detailed_ingredients.csv"
 )
 steps_path = os.path.join(
-    ROOT_DIR, "data", "clean", category, f"{category}_recipe_steps.csv"
+    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_recipe_steps.csv"
 )
 
 # -------------------- 載入向量與模型 --------------------
@@ -393,9 +393,7 @@ def pretty_print(item: dict):
     print(f"=== 查詢結果：Recipe ID {item['id']} (相似度 {item['score']:.4f}) ===\n")
     print(
         f"食譜名稱：{rec.get('食譜名稱','')}\n"
-        f"分類　　　：{rec.get('category','')}\n"
-        f"網址　　　：{rec.get('網址','')}\n"
-        f"圖片路徑　：{rec.get('圖片相對路徑','')}\n"
+        f"分類　　　：{rec.get('vege_name','')}\n"
     )
     # 食材
     print("── 食材 Ingredients ──")
