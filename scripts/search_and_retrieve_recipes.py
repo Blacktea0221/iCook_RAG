@@ -16,6 +16,7 @@ $ pip install pandas numpy sentence-transformers googlesearch-python jieba
 $ python search_and_retrieve_recipes.py
 """
 import json
+import random
 import os
 import re
 import subprocess
@@ -30,25 +31,14 @@ from googlesearch import search  # pip install googlesearch-python
 from sentence_transformers import SentenceTransformer
 
 # -------------------- 專案路徑 --------------------
-vege_name = "九層塔"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
 # -------------------- 檔案路徑 --------------------
-tags_path = os.path.join(ROOT_DIR, "data", "embeddings", vege_name, "tags.json")
-embed_path = os.path.join(ROOT_DIR, "data", "embeddings", vege_name, "embeddings.npy")
-cleaned_path = os.path.join(
-    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_recipes_cleaned.csv"
-)
-preview_path = os.path.join(
-    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_preview_ingredients.csv"
-)
-detailed_path = os.path.join(
-    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_detailed_ingredients.csv"
-)
-steps_path = os.path.join(
-    ROOT_DIR, "data", "clean", vege_name, f"{vege_name}_recipe_steps.csv"
-)
+tags_path = os.path.join(ROOT_DIR, "data", "embeddings", "tags.json")
+embed_path = os.path.join(ROOT_DIR, "data", "embeddings", "embeddings.npy")
+index_path = os.path.join(ROOT_DIR, "data", "embeddings", "index.json")
+classify_path = os.path.join(ROOT_DIR, "data", "embeddings", "Meat and Vegetarian.json")
 
 # -------------------- 載入向量與模型 --------------------
 with open(tags_path, "r", encoding="utf-8") as f:
@@ -57,24 +47,77 @@ embeddings = np.load(embed_path)
 model = SentenceTransformer("BAAI/bge-m3")
 emb_norms = np.linalg.norm(embeddings, axis=1)
 
+# 載入 index.json（未來可用於加速特定食材檢索）
+with open(index_path, "r", encoding="utf-8") as f:
+    index_map = json.load(f)
+
+# 載入 Meat and Vegetarian 分類檔
+with open(classify_path, "r", encoding="utf-8") as f:
+    CLASSIFY_MAP = json.load(f)
+
 # 建立 id -> set(tag)
 id2tags = defaultdict(set)
 for item in tags:
-    id2tags[item["id"]].add(item["tag"])
+    rid = int(item["id"])
+    id2tags[rid].add(item["tag"])
 
 # -------------------- 載入食譜資料 --------------------
 print("載入清理後的食譜資料...")
-df_cleaned = pd.read_csv(cleaned_path, sep=";", encoding="utf-8-sig")
-df_cleaned.columns = df_cleaned.columns.str.strip()
-df_preview = pd.read_csv(preview_path, encoding="utf-8-sig").rename(
-    columns=lambda x: x.strip()
-)
-df_detailed = pd.read_csv(detailed_path, encoding="utf-8-sig").rename(
-    columns=lambda x: x.strip()
-)
-df_steps = pd.read_csv(steps_path, encoding="utf-8-sig").rename(
-    columns=lambda x: x.strip()
-)
+
+# 動態讀取 data/clean 下所有蔬菜資料夾
+CLEAN_ROOT = os.path.join(ROOT_DIR, "data", "clean")
+vege_names = [
+    name for name in os.listdir(CLEAN_ROOT)
+    if os.path.isdir(os.path.join(CLEAN_ROOT, name))
+]
+
+# 用來收集不同蔬菜的 DataFrame
+df_cleaned_list  = []
+df_preview_list  = []
+df_detailed_list = []
+df_steps_list    = []
+
+for v in vege_names:
+    folder = os.path.join(CLEAN_ROOT, v)
+    # cleaned.csv 可能以分號分隔
+    df_cleaned_list.append(
+        pd.read_csv(
+            os.path.join(folder, f"{v}_recipes_cleaned.csv"),
+            sep=";", encoding="utf-8-sig"
+        )
+        .rename(columns=lambda x: x.strip())
+        .assign(vege_name=v)
+    )
+    df_preview_list.append(
+        pd.read_csv(
+            os.path.join(folder, f"{v}_preview_ingredients.csv"),
+            encoding="utf-8-sig"
+        )
+        .rename(columns=lambda x: x.strip())
+        .assign(vege_name=v)
+    )
+    df_detailed_list.append(
+        pd.read_csv(
+            os.path.join(folder, f"{v}_detailed_ingredients.csv"),
+            encoding="utf-8-sig"
+        )
+        .rename(columns=lambda x: x.strip())
+        .assign(vege_name=v)
+    )
+    df_steps_list.append(
+        pd.read_csv(
+            os.path.join(folder, f"{v}_recipe_steps.csv"),
+            encoding="utf-8-sig"
+        )
+        .rename(columns=lambda x: x.strip())
+        .assign(vege_name=v)
+    )
+
+# 合併成四個大表
+df_cleaned  = pd.concat(df_cleaned_list,  ignore_index=True)
+df_preview  = pd.concat(df_preview_list,  ignore_index=True)
+df_detailed = pd.concat(df_detailed_list, ignore_index=True)
+df_steps    = pd.concat(df_steps_list,    ignore_index=True)
 
 # ==============================================================
 #  ★★★ 新增區塊 1：準備「食材字典」 ★★★
@@ -103,7 +146,15 @@ for w in ING_SET:
 print(f"食材字典大小：{len(ING_SET)}")
 
 # ==============================================================
-#  ★★★ 新增區塊 2：關鍵字抽取函式 ★★★
+#  ★★★ 新增區塊 ：分類與抽取常量 ★★★
+# ==============================================================
+# 分類槽位
+CLASS_DICT    = {"素食", "葷食"}
+CLASS_MAPPING = {"素食": "vegetarian", "葷食": "non_vegetarian"}
+# 未來可擴展口味槽位 FLAVOR_VOCAB = {...}
+
+# ==============================================================
+#  ★★★ 新增區塊 ：關鍵字抽取函式 ★★★
 # ==============================================================
 
 LLM_PROMPT = """你是食材抽取助手，只回 JSON 陣列。從句子中找出食材名稱（只要名稱），依序輸出：
@@ -189,60 +240,60 @@ def search_similar(query: str, top_k: int = 5):
     return [(int(tags[i]["id"]), float(sims[i])) for i in idxs]
 
 
-def search_and_retrieve(query: str, top_k: int = 3):
-    """
-    查詢時僅回傳「所有關鍵字都出現」的食譜（ingredients/tag 必須全覆蓋），
-    並根據語意分數排序，數量不足時不補部分命中，只顯示完全命中的結果。
-    """
-    # 1. 取得所有 tags（已在全域變數 tags 載入）
-    from collections import defaultdict
+# def search_and_retrieve(query: str, top_k: int = 3):
+#     """
+#     查詢時僅回傳「所有關鍵字都出現」的食譜（ingredients/tag 必須全覆蓋），
+#     並根據語意分數排序，數量不足時不補部分命中，只顯示完全命中的結果。
+#     """
+#     # 1. 取得所有 tags（已在全域變數 tags 載入）
+#     from collections import defaultdict
 
-    # 2. 將 tags 轉換為 id -> set(tag) 結構
-    id2tags = defaultdict(set)
-    for item in tags:
-        id2tags[item["id"]].add(item["tag"])
+#     # 2. 將 tags 轉換為 id -> set(tag) 結構
+#     id2tags = defaultdict(set)
+#     for item in tags:
+#         id2tags[item["id"]].add(item["tag"])
 
-    # 3. 將 query 拆成多個關鍵字
-    # 支援中/英逗號
-    keywords = [kw.strip() for kw in query.replace("，", ",").split(",") if kw.strip()]
-    if not keywords:
-        return []
+#     # 3. 將 query 拆成多個關鍵字
+#     # 支援中/英逗號
+#     keywords = [kw.strip() for kw in query.replace("，", ",").split(",") if kw.strip()]
+#     if not keywords:
+#         return []
 
-    # 4. 找出同時擁有所有關鍵字的食譜 id
-    full_hit_ids = [
-        rid
-        for rid, tagset in id2tags.items()
-        if all(any(kw in tag for tag in tagset) for kw in keywords)
-    ]
+#     # 4. 找出同時擁有所有關鍵字的食譜 id
+#     full_hit_ids = [
+#         rid
+#         for rid, tagset in id2tags.items()
+#         if all(any(kw in tag for tag in tagset) for kw in keywords)
+#     ]
 
-    if not full_hit_ids:
-        return []
+#     if not full_hit_ids:
+#         return []
 
-    # 5. 用 embedding 計算語意分數，只排序完全命中的 id
-    q_emb = model.encode([query])[0]
-    q_norm = np.linalg.norm(q_emb)
-    sims = embeddings.dot(q_emb) / (emb_norms * q_norm + 1e-10)
-    # 製作 id: max_score 字典
-    id2score = {}
-    for i, t in enumerate(tags):
-        rid = int(t["id"])
-        if rid in full_hit_ids:
-            # 取這個 id 的最大語意分數（因為一個 id 可能對應多個 tag 向量）
-            id2score[rid] = max(id2score.get(rid, float("-inf")), float(sims[i]))
+#     # 5. 用 embedding 計算語意分數，只排序完全命中的 id
+#     q_emb = model.encode([query])[0]
+#     q_norm = np.linalg.norm(q_emb)
+#     sims = embeddings.dot(q_emb) / (emb_norms * q_norm + 1e-10)
+#     # 製作 id: max_score 字典
+#     id2score = {}
+#     for i, t in enumerate(tags):
+#         rid = int(t["id"])
+#         if rid in full_hit_ids:
+#             # 取這個 id 的最大語意分數（因為一個 id 可能對應多個 tag 向量）
+#             id2score[rid] = max(id2score.get(rid, float("-inf")), float(sims[i]))
 
-    # 6. 按語意分數排序，取 top_k
-    sorted_ids = sorted(full_hit_ids, key=lambda rid: -id2score[rid])[:top_k]
+#     # 6. 按語意分數排序，取 top_k
+#     sorted_ids = sorted(full_hit_ids, key=lambda rid: -id2score[rid])[:top_k]
 
-    # 7. 回傳完整食譜內容與分數
-    results = []
-    for rid in sorted_ids:
-        recipe = get_recipe_by_id(rid, (df_cleaned, df_preview, df_detailed, df_steps))
-        if recipe:
-            results.append({"id": rid, "score": id2score[rid], "recipe": recipe})
-    return results
+#     # 7. 回傳完整食譜內容與分數
+#     results = []
+#     for rid in sorted_ids:
+#         recipe = get_recipe_by_id(rid, (df_cleaned, df_preview, df_detailed, df_steps))
+#         if recipe:
+#             results.append({"id": rid, "score": id2score[rid], "recipe": recipe})
+#     return results
 
 
-def search_by_partial_ingredients(query, top_k=3):
+def search_by_partial_ingredients(query, top_k=3, allowed_ids=None):
     ingredients = [
         kw.strip() for kw in query.replace("，", ",").split(",") if kw.strip()
     ]
@@ -250,6 +301,9 @@ def search_by_partial_ingredients(query, top_k=3):
         return []
     id2count = {}
     for rid, tagset in id2tags.items():
+        # skip 非 allowed_ids
+        if allowed_ids is not None and rid not in allowed_ids:
+            continue
         count = sum(any(kw in tag for tag in tagset) for kw in ingredients)
         if count > 0:
             id2count[rid] = count  # 至少命中1個才納入
@@ -261,7 +315,7 @@ def search_by_partial_ingredients(query, top_k=3):
     id2score = {}
     for i, t in enumerate(tags):
         rid = int(t["id"])
-        if rid in id2count:
+        if rid in id2count and (allowed_ids is None or rid in allowed_ids):
             id2score[rid] = max(id2score.get(rid, float("-inf")), float(sims[i]))
     sorted_ids = sorted(
         id2count.keys(), key=lambda rid: (-id2count[rid], -id2score[rid])
@@ -333,7 +387,9 @@ def call_ollama_llm(
     except subprocess.CalledProcessError as e:
         return f"Ollama 發生錯誤：{e.stderr.strip()}"
 
-
+# ==============================================================
+#  Google 後備搜索 & 摘要歸納
+# ==============================================================
 def google_search_recipes(keyword: str, k: int = 5) -> List[Dict]:
     """
     後備 Google 搜尋：在使用者輸入的文字後面自動加上「食譜」二字，
@@ -347,7 +403,6 @@ def google_search_recipes(keyword: str, k: int = 5) -> List[Dict]:
             {"title": item.title, "link": item.url, "snippet": item.description}
         )
     return results
-
 
 def summarize_search_results(
     user_query: str, results: list, model: str = "qwen3:4b-q4_K_M"
@@ -417,29 +472,65 @@ if __name__ == "__main__":
         if raw_input_text.lower() in ("exit", "quit"):
             break
 
-        # 1) 先抽取食材關鍵字
+        # 1) 用 Jieba 切詞
+        tokens = jieba.lcut(raw_input_text)
+
+        # 2) 抽出 class、hates_pork
+        classes    = [t for t in tokens if t in CLASS_DICT]
+        hates_pork = "不吃豬肉" in raw_input_text
+
+        # 3) 先擷取食材關鍵字
         keywords = pull_ingredients(raw_input_text)
+
+        # 4) diet 與 pork 過濾 → allowed_ids
+        allowed_ids = None
+        if classes:
+            diet_key = CLASS_MAPPING[classes[0]]
+            allowed_ids = [
+                int(rid) for rid, info in CLASSIFY_MAP.items()
+                if info["diet"] == diet_key
+            ]
+            if hates_pork:
+                allowed_ids = [
+                    rid for rid in allowed_ids
+                    if not CLASSIFY_MAP[str(rid)]["uses_pork"]
+                ]
+
+        # 5) 只有輸入 class（如「素食」）沒有 keywords，就隨機顯示 3 道
+        if classes and not keywords:
+            sample_ids = random.sample(allowed_ids, k=min(3, len(allowed_ids)))
+            for rid in sample_ids:
+                rec = get_recipe_by_id(
+                    rid,
+                    (df_cleaned, df_preview, df_detailed, df_steps)
+                )
+                pretty_print({"id": rid, "score": 1.0, "recipe": rec})
+            continue
+
+        # 6) 沒有任何 keywords，就跑 Google 備援
         if not keywords:
             print("⚠️ 未偵測到任何可用食材，改為網路搜尋模式…")
-            # 直接做 Google 後備
             web_hits = google_search_recipes(raw_input_text, k=5)
             if not web_hits:
                 print("🚫 Google 無結果，請嘗試其他關鍵字。")
                 continue
             summary = summarize_search_results(raw_input_text, web_hits)
             print("🌐 來自 Google 的推薦：\n" + summary + "\n")
-            # open_choice = input("要在瀏覽器開啟第一筆結果嗎？(y/n): ").strip().lower()
-            # if open_choice == "y":
-            #     import webbrowser
-
-            #     webbrowser.open(web_hits[0]["link"])
             continue
 
-        # 2) 有抽到關鍵字，就用本地 OR 檢索
+        # 7) 有關鍵字 → 本地檢索
         query = ", ".join(keywords)
-        res = search_by_partial_ingredients(query, top_k=3)
+        res = search_by_partial_ingredients(
+            query, top_k=3, allowed_ids=allowed_ids
+        )
+                # 7.1) 如果使用者有說 "不吃豬肉"，統一在這裡再剔除所有 uses_pork = True 的項目
+        if hates_pork:
+            res = [
+                hit for hit in res
+                if not CLASSIFY_MAP[str(hit["id"])]["uses_pork"]
+            ]
 
-        # 3) 如果本地查無結果，再跑 Google 後備
+        # 8) 若本地查無結果，再跑 Google
         if not res:
             print("⚠️ 本地資料庫查無結果，嘗試網路搜尋…")
             web_hits = google_search_recipes(query, k=5)
@@ -448,11 +539,6 @@ if __name__ == "__main__":
                 continue
             summary = summarize_search_results(query, web_hits)
             print("🌐 來自 Google 的推薦：\n" + summary + "\n")
-            # open_choice = input("要在瀏覽器開啟第一筆結果嗎？(y/n): ").strip().lower()
-            # if open_choice == "y":
-            #     import webbrowser
-
-            #     webbrowser.open(web_hits[0]["link"])
             continue
 
         print("\n正在自動推薦最適合的食譜...\n")
@@ -471,7 +557,7 @@ if __name__ == "__main__":
 
         while True:
             follow_up = input(
-                "請輸入想查看詳情的食譜編號/名稱，或輸入 new 查詢新食材: "
+                "請輸入想查看詳情的食譜編號/名稱，或輸入 new 查詢新食材，也可以輸入exit 退出 "
             ).strip()
             if follow_up.lower() in ("exit", "quit"):
                 exit()
