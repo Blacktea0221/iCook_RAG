@@ -177,7 +177,7 @@ class ICookRecipeScraper:
 
         # ---------- (1) 決定路徑 ----------
         # 先確保 recipe/ 這個資料夾存在
-        recipe_dir = os.path.join("data", "raw")
+        recipe_dir = os.path.join("../../data", "raw")
         os.makedirs(recipe_dir, exist_ok=True)
 
         # CSV 檔名維持原本規則
@@ -265,11 +265,11 @@ class ICookRecipeScraper:
 # -------------------- 若直接執行此檔 -------------------------
 if __name__ == "__main__":
     # --- 讀 TXT 取得所有蔬菜名稱 ---
-    TXT_FILE = "data\蔬菜.txt"  # ← 若檔名或路徑不同，這裡改
+    TXT_FILE = "../../data/蔬菜.txt"  # ← 若檔名或路徑不同，這裡改
     keywords = load_keywords_from_txt(TXT_FILE)
 
     # --- 建立爬蟲物件 ---
-    scraper = ICookRecipeScraper(image_root="data/images")
+    scraper = ICookRecipeScraper(image_root="../../data/images")
 
     # --- 逐一爬取 ---
     # 傳 list 進去即可；程式會對每個關鍵字各自輸出 CSV 與圖片資料夾

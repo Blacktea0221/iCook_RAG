@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 # 1. 載入你的詳細食材 CSV
 #    從專案根目錄打開 data/clean/...，並改用分號分隔
-RAW_DIR = "data/raw"
+RAW_DIR = "../../data/raw"
 CSV_PATTERN = "*_食譜資料.csv"
 all_dfs = []
 for csv_path in glob.glob(os.path.join(RAW_DIR, CSV_PATTERN)):
@@ -90,7 +90,7 @@ df["素葷分類"] = results
 
 
 # 确保 output 目录存在
-out_dir = "data/embeddings"
+out_dir = "../../data/embeddings"
 os.makedirs(out_dir, exist_ok=True)
 
 # 写入 Meat and Vegetarian.json
