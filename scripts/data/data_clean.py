@@ -309,8 +309,8 @@ def save_cleaned_recipes(df, vege_name, output_dir):
 
 # 主流程
 def main():
-    input_dir = "test"  # 原始 CSV 檔案資料夾
-    output_dir = "./data/clean"  # 清理後檔案輸出資料夾
+    input_dir = "../../test"  # 原始 CSV 檔案資料夾
+    output_dir = "../../data/clean"  # 清理後檔案輸出資料夾
 
     for filename in os.listdir(input_dir):
         if not filename.endswith(".csv"):
