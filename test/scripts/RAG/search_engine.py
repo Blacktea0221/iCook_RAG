@@ -1,8 +1,34 @@
 import re
 
 import jieba
+import psycopg2
 
 from .vectorstore_utils import search_vectorstore
+
+DB_CONFIG = dict(
+    host="localhost", port=5432, database="postgres", user="lorraine", password="0000"
+)
+
+
+def fetch_one(query, params=None):
+    conn = psycopg2.connect(**DB_CONFIG)
+    cur = conn.cursor()
+    cur.execute(query, params or ())
+    row = cur.fetchone()
+    colnames = [desc[0] for desc in cur.description]
+    conn.close()
+    return dict(zip(colnames, row)) if row else None
+
+
+def fetch_all(query, params=None):
+    conn = psycopg2.connect(**DB_CONFIG)
+    cur = conn.cursor()
+    cur.execute(query, params or ())
+    rows = cur.fetchall()
+    colnames = [desc[0] for desc in cur.description]
+    conn.close()
+    return [dict(zip(colnames, row)) for row in rows]
+
 
 # =============== 關鍵字抽取相關 ===============
 
@@ -25,33 +51,40 @@ def pull_ingredients(user_text: str, ingredient_set: set) -> list:
 
 
 # =============== 食譜ID查詢 ===============
-
-
-def get_recipe_by_id(recipe_id, df_cleaned, df_preview, df_detailed, df_steps):
-    """
-    根據 recipe_id 從已載入的 DataFrame 中取得完整食譜資料。
-    返回一個 dict 包括：
-      - 主表欄位
-      - preview_tags（list）
-      - ingredients（list of dict）
-      - steps（list of dict）
-    """
-    rec = df_cleaned[df_cleaned["id"] == recipe_id]
-    if rec.empty:
+def get_recipe_by_id(recipe_id):
+    # 主表
+    recipe = fetch_one(
+        "SELECT * FROM public.recipes_cleaned WHERE id = %s;", (recipe_id,)
+    )
+    if not recipe:
         return None
-    rec_dict = rec.iloc[0].to_dict()
 
-    tags = df_preview[df_preview["id"] == recipe_id]["preview_tag"].tolist()
-    det = df_detailed[df_detailed["id"] == recipe_id]
-    ingredients = det[["ingredient_name", "quantity", "unit"]].to_dict(orient="records")
-    st = df_steps[df_steps["id"] == recipe_id].sort_values("step_no")
-    steps_list = st[["step_no", "description"]].to_dict(orient="records")
+    # 預覽tag
+    tags = fetch_all(
+        "SELECT preview_tag FROM public.preview_ingredients WHERE id = %s;",
+        (recipe_id,),
+    )
+    recipe["preview_tags"] = [t["preview_tag"] for t in tags]
 
-    rec_dict["preview_tags"] = tags
-    rec_dict["ingredients"] = ingredients
-    rec_dict["steps"] = steps_list
-    return rec_dict
+    # 食材
+    ingredients = fetch_all(
+        "SELECT ingredient_name, quantity, unit FROM public.detailed_ingredients WHERE id = %s;",
+        (recipe_id,),
+    )
+    recipe["ingredients"] = ingredients
 
+    # 步驟
+    steps = fetch_all(
+        "SELECT step_no, description FROM public.recipe_steps WHERE id = %s ORDER BY step_no;",
+        (recipe_id,),
+    )
+    recipe["steps"] = steps
+
+    return recipe
+
+
+# 保留原有的向量查詢流程，僅在取細節時呼叫 get_recipe_by_id
+from .vectorstore_utils import search_vectorstore
 
 # =============== 向量檢索（全新） ===============
 
@@ -64,30 +97,22 @@ def search_similar(query: str, top_k: int = 5):
     return results
 
 
-def search_by_partial_ingredients(
-    query,
-    df_cleaned,
-    df_preview,
-    df_detailed,
-    df_steps,
-    top_k=3,
-    allowed_ids=None,
-):
+def search_by_partial_ingredients(query, top_k=3, allowed_ids=None):
     """
-    ingredients: 關鍵字以 , 或 ，分隔，可以是多個食材
-    allowed_ids: 用來進行條件過濾（如只看素食/不吃豬肉等）
-    回傳結果list，每筆是 dict: {id, tag, vege_name, recipe}
+    query: 關鍵字組成的查詢句（如：九層塔, 雞肉）
+    allowed_ids: 可以限定 id（如素食、排除豬肉），可選
+    返回 [{id, tag, vege_name, score, recipe}]
     """
-    # 關鍵字組成查詢句
+
+    # ingredients 關鍵字組查詢
     ingredients = [
         kw.strip() for kw in query.replace("，", ",").split(",") if kw.strip()
     ]
     if not ingredients:
         return []
+
     search_phrase = " ".join(ingredients)
-    candidates = search_vectorstore(
-        search_phrase, top_k=top_k * 3
-    )  # 多抓一些做二次篩選
+    candidates = search_vectorstore(search_phrase, top_k=top_k * 3)
 
     results = []
     seen_ids = set()
@@ -97,7 +122,7 @@ def search_by_partial_ingredients(
             continue
         if rid in seen_ids:
             continue
-        recipe = get_recipe_by_id(rid, df_cleaned, df_preview, df_detailed, df_steps)
+        recipe = get_recipe_by_id(rid)
         if recipe:
             results.append(
                 {

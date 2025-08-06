@@ -17,9 +17,10 @@ EMBED_PATH = os.path.join(EMBEDDINGS_DIR, "embeddings.npy")
 PG_HOST = "localhost"
 PG_PORT = 5432
 PG_DB = "postgres"
-PG_USER = "postgres"
+PG_USER = "lorraine"
 PG_PASSWORD = "0000"
 TABLE_NAME = "recipe_vectors"
+
 
 # === 1. 載入資料 ===
 with open(TAGS_PATH, "r", encoding="utf-8") as f:
@@ -40,7 +41,11 @@ conn.commit()
 # === 4. 批次插入 ===
 insert_sql = (
     f"INSERT INTO {TABLE_NAME} (recipe_id, tag, vege_name, embedding) "
-    f"VALUES (%s, %s, %s, %s)"
+    f"VALUES (%s, %s, %s, %s) "
+    f"ON CONFLICT (recipe_id) DO UPDATE SET "
+    f"tag = EXCLUDED.tag, "
+    f"vege_name = EXCLUDED.vege_name, "
+    f"embedding = EXCLUDED.embedding"
 )
 
 batch_size = 1000

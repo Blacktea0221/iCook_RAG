@@ -34,42 +34,28 @@ MODEL_NAME = "BAAI/bge-m3"  # 向量化模型，可依需求替換
 
 
 def main():
-    # 1. 掃描所有子資料夾，讀取並合併每個 vege 的 preview_tags
-    all_ids, all_tags, all_veges = [], [], []
-    index_map = {}
-    start_idx = 0
+    # 讀取單一檔案 ingredient.csv
+    csv_path = "data/clean/ingredient.csv"
+    df = pd.read_csv(csv_path, encoding="utf-8-sig")[
+        ["recipe_id", "preview_tag"]
+    ].drop_duplicates()
 
-    for vege in sorted(os.listdir(INPUT_ROOT)):
-        vege_dir = os.path.join(INPUT_ROOT, vege)
-        csv_path = os.path.join(vege_dir, f"{vege}_preview_ingredients.csv")
-        if not os.path.isfile(csv_path):
-            continue
+    all_ids = df["recipe_id"].tolist()
+    all_tags = df["preview_tag"].tolist()
 
-        df = pd.read_csv(csv_path, encoding="utf-8-sig")[
-            ["id", "preview_tag"]
-        ].drop_duplicates()
-        ids = df["id"].tolist()
-        tags = df["preview_tag"].tolist()
+    # 所有向量屬於同一類別 'ingredient'
+    all_veges = ["ingredient"] * len(all_tags)
+    index_map = {"ingredient": {"start": 0, "length": len(all_tags)}}
 
-        # 記錄 indexmap 的 start & length
-        length = len(tags)
-        index_map[vege] = {"start": start_idx, "length": length}
-        start_idx += length
-
-        all_ids.extend(ids)
-        all_tags.extend(tags)
-        all_veges.extend([vege] * length)
-
-    # 2. 一次性載入模型並對所有標籤做向量化
+    # 向量化
     print(f"加載模型: {MODEL_NAME}")
     model = SentenceTransformer(MODEL_NAME)
     print(f"開始向量化 {len(all_tags)} 個標籤...")
     embeddings = model.encode(all_tags, show_progress_bar=True)
 
-    # 3. 建立輸出資料夾（不分子資料夾）
+    # 儲存輸出
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # 4. 儲存所有 id/tag/vege_name 對應清單 (全域 JSON)
     entries = [
         {"id": _id, "tag": _tag, "vege_name": _v}
         for _id, _tag, _v in zip(all_ids, all_tags, all_veges)
@@ -78,11 +64,9 @@ def main():
         json.dump(entries, f, ensure_ascii=False, indent=2)
     print(f"已儲存標籤對應檔: {os.path.join(OUTPUT_DIR, TAGS_JSON)}")
 
-    # 5. 儲存所有 embeddings (單一 .npy)
     np.save(os.path.join(OUTPUT_DIR, EMBEDDINGS_NPY), embeddings)
     print(f"已儲存 embeddings 檔: {os.path.join(OUTPUT_DIR, EMBEDDINGS_NPY)}")
 
-    # 6. 儲存 index.json
     with open(os.path.join(OUTPUT_DIR, INDEX_JSON), "w", encoding="utf-8") as f:
         json.dump(index_map, f, ensure_ascii=False, indent=2)
     print(f"已儲存索引檔: {os.path.join(OUTPUT_DIR, INDEX_JSON)}")

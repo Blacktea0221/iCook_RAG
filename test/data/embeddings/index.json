@@ -1,10 +1,6 @@
 {
-  "九層塔": {
+  "ingredient": {
     "start": 0,
-    "length": 323
-  },
-  "高麗菜": {
-    "start": 323,
-    "length": 342
+    "length": 14079
   }
 }
