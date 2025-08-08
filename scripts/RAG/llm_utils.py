@@ -44,27 +44,29 @@ def call_ollama_llm(user_query, recipes, model="qwen3:4b-q4_K_M"):
     context_blocks = []
     for r in recipes:
         rec = r["recipe"]
+        title = (rec.get("recipe") or rec.get("食譜名稱") or "").strip()
         ingredients_str = "、".join(
-            i["ingredient_name"] for i in rec.get("ingredients", [])
+            (i.get("ingredient") or i.get("ingredient_name") or "").strip()
+            for i in rec.get("ingredients", [])
+            if (i.get("ingredient") or i.get("ingredient_name"))
         )
         context_blocks.append(
-            f"【{rec.get('食譜名稱','')}】(ID: {r['id']})\n"
+            f"【{title}】(ID: {r['id']})\n"
             f"主要食材：{ingredients_str}\n"
             f"簡要說明：可參考詳細步驟製作。"
         )
     context_text = "\n\n---\n\n".join(context_blocks)
 
     prompt = (
-        f"以下是料理食譜的資訊：\n{context_text}\n\n"
-        f"請扮演一位料理專家，根據這些食譜資訊，"
-        f"用30字描述內容。\n"
-        f"請在每道料理標題後標註其 ID（如：台式羅勒燒雞 (ID: 474705)），以便用戶後續查詢。\n"
-        f"在最前面用1. 2. 3. 表示每道食譜的順序。\n"
-        f"將所有食譜條列式分別描述內容。\n"
-        f"回覆請直接進入主題，不需討論分析過程。\n"
-        f"只能從下列提供的食譜中描述內容。\n"
-        f"若發現內容重複，請合併為一條並只列一次。\n"
-        f"請用繁體中文回答。"
+        f"以下是料理食譜的資訊（每道以【標題】與 ID 表示）：\n{context_text}\n\n"
+        f"請扮演料理專家，依據以上**僅提供的資訊**，輸出條列清單：\n"
+        f"1) 每條以阿拉伯數字編號\n"
+        f"2) **標題請精確複製【】內文字，不可改寫或生成新標題**\n"
+        f"3) 標題後標註其 ID（如： (ID: 474705) ）\n"
+        f"4) 每條再用約 20～30 字摘要主要做法或重點（不可捏造額外材料）\n"
+        f"5) 只使用繁體中文\n"
+        f"6) 若內容類似可合併成一條，但保留所有涉及的 ID\n"
+        f"7) 僅能使用提供的食譜與資訊，不能自行補充\n"
     )
 
     try:

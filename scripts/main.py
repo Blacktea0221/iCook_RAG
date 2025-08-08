@@ -1,14 +1,26 @@
+# main.py
+import json
 import random
+import jieba
 
-# Google search 邏輯可自行包一個 utils/ 或 inline
+# === 保留：Google 搜尋（已關閉實際呼叫） ===
 from googlesearch import search as google_search  # pip install googlesearch-python
-from RAG.data_loader import load_data
-from RAG.llm_utils import call_ollama_llm, summarize_search_results
+
+# === 改：不再用 data_loader，直接用 search_engine 提供的 DB utils 與檢索 ===
 from RAG.search_engine import (
+    fetch_all,               # 新增：直接拿 DB 資料
     get_recipe_by_id,
     pull_ingredients,
-    search_by_partial_ingredients,
+    tag_then_vector_rank,
 )
+from RAG.llm_utils import call_ollama_llm, summarize_search_results
+
+# 只讀取本地 classify_map（沿用你原本的設定）
+with open("data/embeddings/Meat and Vegetarian.json", "r", encoding="utf-8") as f:
+    CLASSIFY_MAP = json.load(f)
+
+CLASS_DICT = {"素食", "葷食"}
+CLASS_MAPPING = {"素食": "vegetarian", "葷食": "non_vegetarian"}
 
 
 def google_search_recipes(keyword: str, k: int = 5):
@@ -21,171 +33,147 @@ def google_search_recipes(keyword: str, k: int = 5):
     return results
 
 
+def build_ingredient_set_from_db() -> set:
+    """
+    直接從資料庫建立 ingredient_set：抓 ingredient + preview_tag 去重。
+    表：public.ingredient（recipe_id, ingredient, preview_tag）
+    """
+    rows = fetch_all(
+        "SELECT ingredient, preview_tag FROM public.ingredient WHERE ingredient IS NOT NULL OR preview_tag IS NOT NULL;"
+    )
+    words = set()
+    for r in rows:
+        ing = (r.get("ingredient") or "").strip()
+        tag = (r.get("preview_tag") or "").strip()
+        if ing:
+            words.add(ing)
+        if tag:
+            words.add(tag)
+    # 讓 jieba 能切出你資料庫裡的詞
+    for w in words:
+        if w:
+            jieba.add_word(w)
+    print(f"[init] 食材字典已初始化（共 {len(words)} 項）")
+    return words
+
+
 def pretty_print(item: dict):
-    """簡化版結果輸出"""
+    """輸出單筆檢索結果（配合新版 get_recipe_by_id 的結構）"""
     rec = item["recipe"]
-    print(
-        f"=== 查詢結果：Recipe ID {item['id']} (相似度 {item.get('score',1.0):.4f}) ===\n"
-    )
-    print(
-        f"食譜名稱：{rec.get('食譜名稱','')}\n"
-        f"分類　　　：{rec.get('vege_name','')}\n"
-    )
+    print(f"=== 查詢結果：Recipe ID {item['id']} (相似度 {item.get('score', 1.0):.4f}) ===\n")
+    print(f"食譜名稱：{rec.get('recipe','')}\n")
+
+    if rec.get("preview_tags"):
+        print("── 預覽 Tags ──")
+        print("、".join(rec["preview_tags"]))
+        print()
+
     print("── 食材 Ingredients ──")
     for idx, ing in enumerate(rec.get("ingredients", []), 1):
-        print(
-            f"{idx}. {ing.get('ingredient_name','')} {ing.get('quantity','')}{ing.get('unit','')}"
-        )
-    print()
-    print("── 步驟 Steps ──")
+        print(f"{idx}. {ing.get('ingredient','')}")
+
+    print("\n── 步驟 Steps ──")
     for step in rec.get("steps", []):
         print(f"{step.get('step_no','')}. {step.get('description','')}")
     print()
 
 
 def main():
-    # 1. 載入所有資料與配置
-    data = load_data()
-    df_cleaned = data["df_cleaned"]
-    df_preview = data["df_preview"]
-    df_detailed = data["df_detailed"]
-    df_steps = data["df_steps"]
-    ingredient_set = data["ingredient_set"]
-    id2tags = data["id2tags"]
-    CLASSIFY_MAP = data["classify_map"]
-
-    CLASS_DICT = {"素食", "葷食"}
-    CLASS_MAPPING = {"素食": "vegetarian", "葷食": "non_vegetarian"}
-
     print("RAG 智能推薦查詢（輸入任何中文描述；exit 離開）")
+
+    # === 直接從 DB 初始化 ingredient_set（不再依賴 data_loader） ===
+    try:
+        ingredient_set = build_ingredient_set_from_db()
+    except Exception as e:
+        print("[FATAL] 初始化食材字典失敗：", repr(e))
+        return
 
     while True:
         raw_input_text = input("\n請描述你有的食材或需求: ").strip()
         if raw_input_text.lower() in ("exit", "quit"):
+            print("離開程式")
             break
 
-        # 1) 用 Jieba 切詞（如果有需求）
-        # tokens = jieba.lcut(raw_input_text)
-
-        # 2) 抽出 class、hates_pork
+        # ========== 特殊飲食條件 ==========
         classes = [t for t in CLASS_DICT if t in raw_input_text]
-        hates_pork = "不吃豬肉" in raw_input_text
+        hates_pork = ("不吃豬肉" in raw_input_text) or ("無豬" in raw_input_text)
 
-        # 3) 先擷取食材關鍵字（Jieba為主，失敗可接llm_utils，但此例只呼叫 search_engine）
-        keywords = pull_ingredients(raw_input_text, ingredient_set)
-
-        # 4) diet 與 pork 過濾 → allowed_ids
         allowed_ids = None
         if classes:
             diet_key = CLASS_MAPPING[classes[0]]
             allowed_ids = [
                 int(rid)
                 for rid, info in CLASSIFY_MAP.items()
-                if info["diet"] == diet_key
+                if info.get("diet") == diet_key
             ]
             if hates_pork:
                 allowed_ids = [
                     rid
                     for rid in allowed_ids
-                    if not CLASSIFY_MAP[str(rid)]["uses_pork"]
+                    if not CLASSIFY_MAP.get(str(rid), {}).get("uses_pork", False)
                 ]
 
-        # 5) 只有輸入 class（如「素食」）沒有 keywords，就隨機顯示 3 道
-        if classes and not keywords:
+        # ========== 關鍵字抽取 ==========
+        keywords = pull_ingredients(raw_input_text, ingredient_set)
+
+        # 僅指定飲食分類、沒關鍵字：隨機推薦
+        if classes and not keywords and allowed_ids:
             sample_ids = random.sample(allowed_ids, k=min(3, len(allowed_ids)))
             for rid in sample_ids:
-                rec = get_recipe_by_id(
-                    rid, df_cleaned, df_preview, df_detailed, df_steps
-                )
-                pretty_print({"id": rid, "score": 1.0, "recipe": rec})
+                rec = get_recipe_by_id(rid)
+                if rec:
+                    pretty_print({"id": rid, "score": 1.0, "recipe": rec})
             continue
 
-        # 6) 沒有任何 keywords，就跑 Google 備援
+        # 抽不到可用關鍵字：走 Google 備援（暫關）
         if not keywords:
             print("⚠️ 未偵測到任何可用食材，改為網路搜尋模式…")
-            web_hits = google_search_recipes(raw_input_text, k=5)
-            if not web_hits:
-                print("🚫 Google 無結果，請嘗試其他關鍵字。")
-                continue
-            summary = summarize_search_results(raw_input_text, web_hits)
-            print("🌐 來自 Google 的推薦：\n" + summary + "\n")
+            hits = google_search_recipes(raw_input_text, k=5)
+            summary = summarize_search_results(raw_input_text, hits)
+            print(summary)
             continue
 
-        # 7) 有關鍵字 → 本地檢索
-        query = ", ".join(keywords)
-        res = search_by_partial_ingredients(
-            query,
-            id2tags,
-            data["model"],
-            data["embeddings"],
-            data["emb_norms"],
-            data["tags"],
-            df_cleaned,
-            df_preview,
-            df_detailed,
-            df_steps,
-            top_k=3,
-            allowed_ids=allowed_ids,
+        # ========== 核心：先 Tag 候選，再整句向量排序 ==========
+        results = tag_then_vector_rank(
+            user_text=raw_input_text,
+            tokens_from_jieba=keywords,
+            top_k=5,
         )
-        # 7.1) 如果使用者有說 "不吃豬肉"，再剔除所有 uses_pork = True 的項目
-        if hates_pork:
-            res = [hit for hit in res if not CLASSIFY_MAP[str(hit["id"])]["uses_pork"]]
 
-        # 8) 若本地查無結果，再跑 Google
-        if not res:
+        # 飲食與豬肉過濾（若指定）
+        if allowed_ids is not None:
+            allowed_set = set(allowed_ids)
+            results = [r for r in results if int(r["id"]) in allowed_set]
+        if hates_pork:
+            results = [r for r in results if not CLASSIFY_MAP.get(str(r["id"]), {}).get("uses_pork", False)]
+
+        if not results:
             print("⚠️ 本地資料庫查無結果，嘗試網路搜尋…")
-            web_hits = google_search_recipes(query, k=5)
-            if not web_hits:
-                print("🚫 Google 無結果，請嘗試其他關鍵字。")
-                continue
-            summary = summarize_search_results(query, web_hits)
-            print("🌐 來自 Google 的推薦：\n" + summary + "\n")
+            hits = google_search_recipes(raw_input_text, k=5)
+            summary = summarize_search_results(raw_input_text, hits)
+            print(summary)
             continue
 
         print("\n正在自動推薦最適合的食譜...\n")
-        answer = call_ollama_llm(query, res)
-        print("🧠 智能推薦：\n" + answer + "\n")
+        try:
+            summary = call_ollama_llm(raw_input_text, results)
+            print(summary)
+        except Exception as e:
+            print("[WARN] LLM 摘要失敗：", repr(e))
+            continue
 
-        print(
-            "🔍 若想查看其中一道食譜的【詳細食材與步驟】，"
-            "請輸入該食譜『名稱關鍵字』或該食譜的 ID"
-        )
-        print("✏️ 若想重新查詢其他食材，請輸入 new；離開請輸入 exit。")
-
-        name_map = {r["recipe"]["食譜名稱"]: r["id"] for r in res}
-        id_set = set(r["id"] for r in res)
-        selected_id = None
-
-        while True:
-            follow_up = input(
-                "請輸入想查看詳情的食譜編號/名稱，或輸入 new 查詢新食材，也可以輸入exit 退出 "
-            ).strip()
-            if follow_up.lower() in ("exit", "quit"):
-                exit()
-            if follow_up.lower() in ("new", ""):
-                break
-
-            if follow_up.isdigit() and int(follow_up) in id_set:
-                selected_id = int(follow_up)
-            else:
-                for name, rid in name_map.items():
-                    if follow_up in name:
-                        selected_id = rid
-                        break
-
-            if selected_id:
-                recipe = get_recipe_by_id(
-                    selected_id, df_cleaned, df_preview, df_detailed, df_steps
-                )
-                if recipe:
-                    pretty_print({"id": selected_id, "score": 1.0, "recipe": recipe})
-                    print(
-                        "\n📌 您可以輸入其他 ID 或名稱繼續查看，或輸入 new 查詢新內容。"
-                    )
+        # 詢問是否查看詳細
+        view_choice = input("\n是否查看詳細食譜？輸入 y 查看 / n 跳過：").strip().lower()
+        if view_choice == "y":
+            id_input = input("請輸入要查看的食譜 ID：").strip()
+            if id_input.isdigit():
+                rec = get_recipe_by_id(id_input)
+                if rec:
+                    pretty_print({"id": id_input, "score": 1.0, "recipe": rec})
                 else:
-                    print("找不到該食譜的詳細資訊。")
+                    print("❌ 查無此 ID 的食譜")
             else:
-                print("無法辨識輸入內容，請再輸入一次。")
+                print("❌ ID 必須是數字")
 
 
 if __name__ == "__main__":
