@@ -1,0 +1,16 @@
+***Postgresql Table Create***
+
+CREATE EXTENSION IF NOT EXISTS vector;
+
+DROP TABLE IF EXISTS public.ingredient_vectors;
+
+CREATE TABLE public.ingredient_vectors (
+  recipe_id VARCHAR NOT NULL,              -- 跟 main_recipe.id 一樣用字串
+  tag TEXT NOT NULL,
+  vege_name TEXT NOT NULL,
+  embedding VECTOR(1024) NOT NULL,
+  CONSTRAINT uq_ingredient_vectors UNIQUE (recipe_id, tag),
+  CONSTRAINT fk_iv_recipe
+    FOREIGN KEY (recipe_id) REFERENCES public.main_recipe(id)
+      ON DELETE CASCADE
+);

@@ -1,13 +1,22 @@
+import os
 import re
-import numpy as np
+
 import jieba
+import numpy as np
 import psycopg2
+from dotenv import load_dotenv
 
 # from .vectorstore_utils import search_vectorstore
 from .vectorstore_utils import embed_text_to_np
 
+load_dotenv()
+
 DB_CONFIG = dict(
-    host="localhost", port=5432, database="postgres", user="lorraine", password="0000"
+    host=os.getenv("DB_HOST"),
+    port=int(os.getenv("DB_PORT", "5432")),
+    database=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),  # 缺就讓程式 fail-fast
 )
 
 
@@ -38,7 +47,6 @@ def jieba_extract(text: str, ingredient_set: set) -> list:
     clean = re.sub(r"[^\w\u4e00-\u9fff]+", " ", text)
     tokens = jieba.lcut(clean, cut_all=False)
     return [t for t in tokens if t in ingredient_set]
-
 
 
 def pull_ingredients(user_text: str, ingredient_set: set) -> list:
@@ -81,19 +89,20 @@ def get_recipe_by_id(recipe_id: int):
         "SELECT step_no, description FROM recipe_steps WHERE recipe_id = %s ORDER BY step_no;",
         (rid,),
     )
-    steps = [{"step_no": r["step_no"], "description": r["description"]} for r in step_rows]
+    steps = [
+        {"step_no": r["step_no"], "description": r["description"]} for r in step_rows
+    ]
 
     # 5) 組合回傳結構（盡量沿用舊鍵名，避免其他程式碼要大改）
     recipe = {
         "id": rec["id"],
-        "recipe": rec["recipe"],          # 料理名稱（舊程式若用 title，請同步調整）
-        "vege_id": rec["vege_id"],        # 你資料裡有這欄，就保留
-        "preview_tags": preview_tags,     # 來自 ingredient.preview_tag
-        "ingredients": ingredients,       # 來自 ingredient.ingredient
-        "steps": steps,                   # 來自 recipe_steps
+        "recipe": rec["recipe"],  # 料理名稱（舊程式若用 title，請同步調整）
+        "vege_id": rec["vege_id"],  # 你資料裡有這欄，就保留
+        "preview_tags": preview_tags,  # 來自 ingredient.preview_tag
+        "ingredients": ingredients,  # 來自 ingredient.ingredient
+        "steps": steps,  # 來自 recipe_steps
     }
     return recipe
-
 
 
 # =============== 檢索 ===============
@@ -111,6 +120,7 @@ def _parse_pgvector_text(s: str) -> np.ndarray:
         return np.zeros((0,), dtype="float32")
     arr = np.fromstring(s, sep=",", dtype="float32")
     return arr
+
 
 ### 修改點：查 alias，回傳「輸入 tokens + 擴充別名」的集合
 def _expand_aliases(tokens):
@@ -173,6 +183,7 @@ def _candidate_recipe_ids_by_tag(expanded_terms, limit_per_term=200):
     rows = fetch_all(sql, tuple(params))
     return [r["recipe_id"] for r in rows]
 
+
 ### 修改點：取出候選的所有 tag 向量（之後會用「整句向量」去比對）
 def _fetch_tag_embeddings_for_recipes(recipe_ids):
     """
@@ -196,9 +207,7 @@ def _fetch_tag_embeddings_for_recipes(recipe_ids):
 
 ### 修改點：主流程—先 Tag 縮小，再以「整句向量」對候選排序
 def tag_then_vector_rank(
-    user_text: str,
-    tokens_from_jieba,    # 你抽到的關鍵詞列表
-    top_k: int = 5
+    user_text: str, tokens_from_jieba, top_k: int = 5  # 你抽到的關鍵詞列表
 ):
     """
     1) 擴充別名，先在 ingredient_vectors 用 tag 做 OR 篩選 -> 候選 recipe_id
@@ -249,11 +258,13 @@ def tag_then_vector_rank(
         recipe = get_recipe_by_id(rid)
         if not recipe:
             continue
-        results.append({
-            "id": rid,
-            "tag": tag_selected_by_id.get(rid),
-            "vege_name": vege_by_id.get(rid),
-            "score": score,
-            "recipe": recipe,
-        })
+        results.append(
+            {
+                "id": rid,
+                "tag": tag_selected_by_id.get(rid),
+                "vege_name": vege_by_id.get(rid),
+                "score": score,
+                "recipe": recipe,
+            }
+        )
     return results

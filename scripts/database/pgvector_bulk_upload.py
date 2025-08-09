@@ -4,7 +4,10 @@ import os
 import numpy as np
 import psycopg2
 import psycopg2.extras
+from dotenv import load_dotenv
 from tqdm import tqdm
+
+load_dotenv()
 
 # 修改成你的資料夾路徑
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -14,12 +17,12 @@ TAGS_PATH = os.path.join(EMBEDDINGS_DIR, "tags.json")
 EMBED_PATH = os.path.join(EMBEDDINGS_DIR, "embeddings.npy")
 
 # PostgreSQL 連線設定
-PG_HOST = "localhost"
-PG_PORT = 5432
-PG_DB = "postgres"
-PG_USER = "lorraine"
-PG_PASSWORD = "0000"
-TABLE_NAME = "ingredient_vectors"  # 假設你用的表名
+PG_HOST = os.getenv("DB_HOST")
+PG_PORT = int(os.getenv("DB_PORT", "5432"))
+PG_DB = os.getenv("DB_NAME")
+PG_USER = os.getenv("DB_USER")
+PG_PASSWORD = os.getenv("DB_PASSWORD")
+TABLE_NAME = os.getenv("PGVECTOR_TABLE", "ingredient_vectors")  # 假設你用的表名
 
 # 載入資料
 with open(TAGS_PATH, "r", encoding="utf-8") as f:

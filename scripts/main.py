@@ -1,19 +1,24 @@
 # main.py
 import json
 import random
+
 import jieba
+from dotenv import load_dotenv
 
 # === 保留：Google 搜尋（已關閉實際呼叫） ===
 from googlesearch import search as google_search  # pip install googlesearch-python
 
+from scripts.RAG.llm_utils import call_ollama_llm, summarize_search_results
+
 # === 改：不再用 data_loader，直接用 search_engine 提供的 DB utils 與檢索 ===
-from RAG.search_engine import (
-    fetch_all,               # 新增：直接拿 DB 資料
+from scripts.RAG.search_engine import fetch_all  # 新增：直接拿 DB 資料
+from scripts.RAG.search_engine import (
     get_recipe_by_id,
     pull_ingredients,
     tag_then_vector_rank,
 )
-from RAG.llm_utils import call_ollama_llm, summarize_search_results
+
+load_dotenv()
 
 # 只讀取本地 classify_map（沿用你原本的設定）
 with open("data/embeddings/Meat and Vegetarian.json", "r", encoding="utf-8") as f:
@@ -60,7 +65,9 @@ def build_ingredient_set_from_db() -> set:
 def pretty_print(item: dict):
     """輸出單筆檢索結果（配合新版 get_recipe_by_id 的結構）"""
     rec = item["recipe"]
-    print(f"=== 查詢結果：Recipe ID {item['id']} (相似度 {item.get('score', 1.0):.4f}) ===\n")
+    print(
+        f"=== 查詢結果：Recipe ID {item['id']} (相似度 {item.get('score', 1.0):.4f}) ===\n"
+    )
     print(f"食譜名稱：{rec.get('recipe','')}\n")
 
     if rec.get("preview_tags"):
@@ -145,7 +152,11 @@ def main():
             allowed_set = set(allowed_ids)
             results = [r for r in results if int(r["id"]) in allowed_set]
         if hates_pork:
-            results = [r for r in results if not CLASSIFY_MAP.get(str(r["id"]), {}).get("uses_pork", False)]
+            results = [
+                r
+                for r in results
+                if not CLASSIFY_MAP.get(str(r["id"]), {}).get("uses_pork", False)
+            ]
 
         if not results:
             print("⚠️ 本地資料庫查無結果，嘗試網路搜尋…")
@@ -163,7 +174,9 @@ def main():
             continue
 
         # 詢問是否查看詳細
-        view_choice = input("\n是否查看詳細食譜？輸入 y 查看 / n 跳過：").strip().lower()
+        view_choice = (
+            input("\n是否查看詳細食譜？輸入 y 查看 / n 跳過：").strip().lower()
+        )
         if view_choice == "y":
             id_input = input("請輸入要查看的食譜 ID：").strip()
             if id_input.isdigit():

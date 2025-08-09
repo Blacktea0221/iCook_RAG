@@ -1,7 +1,14 @@
 import json
+import os
 import re
 import subprocess
 import textwrap
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEFAULT_OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:4b-q4_K_M")
 
 # ========== 食材抽取 LLM PROMPT ==========
 
@@ -11,13 +18,14 @@ LLM_PROMPT_INGREDIENT = """你是食材抽取助手，只回 JSON 陣列。從�
 ---"""
 
 
-def call_llm_extract_ingredients(text, ingredient_set, model_name="qwen3:4b-q4_K_M"):
+def call_llm_extract_ingredients(text, ingredient_set, model_name=None):
+    model = model_name or DEFAULT_OLLAMA_MODEL
     """
     用 LLM 進行關鍵字食材抽取，回傳只在 ingredient_set 內的詞
     """
     prompt = LLM_PROMPT_INGREDIENT.format(text=text)
     res = subprocess.run(
-        ["ollama", "run", model_name, prompt],
+        ["ollama", "run", model, prompt],
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -32,7 +40,8 @@ def call_llm_extract_ingredients(text, ingredient_set, model_name="qwen3:4b-q4_K
 # ========== 智能推薦食譜 LLM PROMPT ==========
 
 
-def call_ollama_llm(user_query, recipes, model="qwen3:4b-q4_K_M"):
+def call_ollama_llm(user_text, recipes, model=None):
+    model = model or DEFAULT_OLLAMA_MODEL
     """
     用 LLM 幫使用者推薦料理（文字生成說明）
     recipes: list of dict (通常來自 search_engine.py 的檢索結果)

@@ -1,17 +1,19 @@
-import os
 import json
+import os
+from collections import defaultdict
+
 import numpy as np
 import pandas as pd
 import psycopg2
 from sentence_transformers import SentenceTransformer
-from collections import defaultdict
 
 # PostgreSQL 連線參數（請自行調整）
-PG_HOST = "localhost"
-PG_PORT = 5432
-PG_DB = "postgres"
-PG_USER = "lorraine"
-PG_PASSWORD = "0000"
+
+PG_HOST = os.getenv("DB_HOST")
+PG_PORT = int(os.getenv("DB_PORT", "5432"))
+PG_DB = os.getenv("DB_NAME")
+PG_USER = os.getenv("DB_USER")
+PG_PASSWORD = os.getenv("DB_PASSWORD")
 
 OUTPUT_DIR = "data/embeddings"
 TAGS_JSON = "tags.json"
