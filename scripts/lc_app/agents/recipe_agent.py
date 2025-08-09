@@ -74,6 +74,7 @@ def build_agent():
                 ]
             )
             if isinstance(data, dict) and "intent" in data:
+                data.setdefault("text", text)
                 return data
         except Exception as e:
             logger.info(f"[Router] structured_output 失敗：{e}")
