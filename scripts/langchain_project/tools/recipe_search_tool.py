@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# scripts/lc_app/tools/recipe_search_tool.py
+# scripts/langchain_project/tools/recipe_search_tool.py
 from typing import Dict, List
 
 from langchain_core.tools import tool

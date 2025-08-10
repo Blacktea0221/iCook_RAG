@@ -37,8 +37,8 @@ else:
     # Presenter：正常文字輸出，不要 JSON 模式
     llm_presenter = ChatOllama(base_url=OLLAMA_URL, model=MODEL, temperature=0.3)
 
-from scripts.lc_app.tools.get_recipe_tool import get_recipe_tool
-from scripts.lc_app.tools.recipe_search_tool import recipe_search_tool
+from scripts.langchain_project.tools.get_recipe_tool import get_recipe_tool
+from scripts.langchain_project.tools.recipe_search_tool import recipe_search_tool
 
 TOOLS = [recipe_search_tool, get_recipe_tool]
 
@@ -51,8 +51,8 @@ class Route(TypedDict):
     intent: Literal["recipe", "nutrition", "price", "identify", "other"]
 
 
-BASE_DIR = Path(__file__).resolve().parent  # .../scripts/lc_app/agents
-PROMPTS_DIR = BASE_DIR.parent / "prompts"  # .../scripts/lc_app/prompts
+BASE_DIR = Path(__file__).resolve().parent  # .../scripts/langchain_project/agents
+PROMPTS_DIR = BASE_DIR.parent / "prompts"  # .../scripts/langchain_project/prompts
 
 ROUTER_SYS = "你是嚴格的分類器，只能輸出 JSON。"
 ROUTER_PROMPT = (PROMPTS_DIR / "router_prompt.txt").read_text(encoding="utf-8")

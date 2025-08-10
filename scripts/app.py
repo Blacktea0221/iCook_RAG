@@ -4,7 +4,7 @@ import os
 
 from dotenv import load_dotenv
 
-from scripts.lc_app.agents.recipe_agent import build_agent
+from scripts.langchain_project.agents.recipe_agent import build_agent
 from scripts.main import build_ingredient_set_from_db
 
 load_dotenv()
