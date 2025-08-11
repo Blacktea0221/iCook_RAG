@@ -9,8 +9,15 @@ from typing import Dict, List
 
 from langchain_core.tools import tool
 
-# 懶載入 ingredient_set：沿用你 main.py 的建立方式
-from scripts.main import build_ingredient_set_from_db
+# 懶載入 ingredient_set
+from scripts.database.ingredient_utils import build_ingredient_set_from_db
+from scripts.RAG.search_engine import (
+    pull_ingredients,            
+    tag_then_vector_rank,                              
+)
+
+_ING_SET = None  # ← 新增：懶載入快取
+
 
 # 核心檢索：你現有的 A 方案
 from scripts.RAG.search_engine import pull_ingredients, tag_then_vector_rank

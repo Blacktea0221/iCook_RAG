@@ -13,6 +13,7 @@ if PROJECT_ROOT not in sys.path:
 from api.router.intent_router import classify_intent
 from api.schemas import RecipeHit, RouteRequest, RouteResponse
 from RAG import search_engine
+from database.ingredient_utils import build_ingredient_set_from_db
 
 load_dotenv()
 
@@ -26,7 +27,7 @@ def health():
 
 def _recipe_rag(query: str, top_k: int) -> List[Dict]:
     # 從 DB 準備 ingredient_set（用你的 main.py 方法）
-    from main import build_ingredient_set_from_db
+    from database.ingredient_utils import build_ingredient_set_from_db
 
     ing_set = build_ingredient_set_from_db()
     tokens = search_engine.pull_ingredients(query, ing_set)

@@ -4,3 +4,5 @@
 *.gif
 *.webp
 .env
+venv/
+
