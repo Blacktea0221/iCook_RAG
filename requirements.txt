@@ -1,36 +1,35 @@
-# ---- 核心科學運算 ----
-numpy==2.3.2
-pandas<2.3.0
+# ---- 科學運算 / 資料處理 ----
+numpy==1.26.4           # Py3.10 有穩定輪子；與 pandas 2.2 相容
+pandas>=2.2,<2.3            # 2.2.x 支援 Py3.10 穩定
 
-# ---- 語意向量 / NLP ----
-sentence-transformers==5.0.0   # 會自動拉入 torch、transformers
-torch==2.7.1                   # 如要 GPU 請改為對應 CUDA 標籤 (ex. +cu118)
-transformers==4.54.0
+# ---- NLP / 向量 ----
+sentence-transformers>=3.0,<3.2
+transformers>=4.41,<4.46
+# torch：若只在 CPU/Windows 測試，讓 pip 自動挑版最穩；
+# 若需要 GPU，請依你的 CUDA 版本另行安裝對應輪子。
+torch>=2.2,<2.6
 jieba==0.42.1
-langchain-core
-langchain-community
-langchain-huggingface
-langchain-ollama
-langchain-openai
+
+# ---- LangChain（統一版本帶來相容性）----
+langchain==0.3.7
+langchain-community==0.3.7
+langchain-huggingface==0.1.2
+langchain-ollama==0.2.0
+langchain-openai==0.2.6
 
 # ---- 爬蟲 / 網路 ----
-requests==2.32.4
-beautifulsoup4==4.13.4         # 提供 bs4
-googlesearch-python==1.3.0     # search_and_retrieve_recipes.py 用
+requests==2.32.3
+beautifulsoup4==4.12.3
+googlesearch-python==1.3.0
 
-# ---- 資料庫 ----
-psycopg2
+# ---- 資料庫 / 設定 ----
+psycopg2-binary==2.9.9      # 本機/CI 建議用 binary；正式環境可換 psycopg2
 python-dotenv==1.0.1
-
 
 # ---- API ----
 fastapi==0.115.0
 uvicorn==0.30.6
-# langchain==0.3.7
-pydantic>=2.11.5
+pydantic>=2.6,<3
 
-# ---- 其他工具 ----
+# ---- 其他 ----
 tqdm==4.67.1
-
-
-
