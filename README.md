@@ -27,12 +27,15 @@ http://127.0.0.1:8000/docs
 
 
 前置條件:
-1.連線進入dbeaver+postgresql(本地端)
+1-1.連線進入dbeaver+postgresql(本地端)
+1-2.連線進入共有資料庫(目前)
 
-2.database資料夾 (如果沒有建立表格)
+2-1.database資料夾 (本地資料庫  如果沒有建立表格)
 透過postgresql.txt 在資料庫建立表格  
 執行Text_conversion_vector.py  -> 食譜材料向量化
 執行pgvector_bulk_upload.py -> 向量化資料上傳至postgres
+
+2-2.共有資料庫直接執行程式
 
 
 目標流程:
