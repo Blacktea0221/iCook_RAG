@@ -1,28 +1,41 @@
+# connect_database.py
+import os
 import psycopg2
+from dotenv import load_dotenv
 
-# 替換為你的密碼
-PASSWORD = "0000"
+# 載入 .env（預設讀取與此檔同目錄或專案根目錄的 .env）
+load_dotenv()
 
-try:
-    conn = psycopg2.connect(
-        host="localhost",
-        port=5432,
-        database="postgres",
-        user="lorraine",
-        password=PASSWORD
-    )
-    print("✅ 成功連線到 PostgreSQL 資料庫")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = int(os.getenv("DB_PORT", ""))
+DB_NAME = os.getenv("DB_NAME", "postgres")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-    # 建立 cursor 並查詢一張表（例如 public.recipe_steps）
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM public.recipe_steps LIMIT 5;")
-    rows = cur.fetchall()
+def main():
+    try:
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            dbname=DB_NAME,   # 或 database=DB_NAME 皆可
+            user=DB_USER,
+            password=DB_PASSWORD,
+        )
+        print("✅ 成功連線到 PostgreSQL")
 
-    for row in rows:
-        print(row)
+        cur = conn.cursor()
+        # 你原本就有在測試抓表，可保留；若表不存在可改成下行簡單測試：
+        # cur.execute("SELECT version();")
+        cur.execute("SELECT * FROM public.recipe_steps LIMIT 5;")
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
 
-    cur.close()
-    conn.close()
+        cur.close()
+        conn.close()
 
-except Exception as e:
-    print("❌ 發生錯誤：", e)
+    except Exception as e:
+        print("❌ 發生錯誤：", e)
+
+if __name__ == "__main__":
+    main()

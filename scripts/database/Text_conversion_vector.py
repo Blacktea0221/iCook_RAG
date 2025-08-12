@@ -6,9 +6,12 @@ import numpy as np
 import pandas as pd
 import psycopg2
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv  # 新增
+
+# 載入 .env（預設讀取與此檔同目錄或專案根目錄的 .env）
+load_dotenv()  # 新增
 
 # PostgreSQL 連線參數（請自行調整）
-
 PG_HOST = os.getenv("DB_HOST")
 PG_PORT = int(os.getenv("DB_PORT", "5432"))
 PG_DB = os.getenv("DB_NAME")
