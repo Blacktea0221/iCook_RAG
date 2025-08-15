@@ -1,0 +1,22 @@
+[
+    {
+        "input": "食譜 蘋果 咖哩",
+        "error": "代理程式執行錯誤：local variable 'res' referenced before assignment"
+    },
+    {
+        "input": "蘋果",
+        "error": "代理程式執行錯誤：local variable 'res' referenced before assignment"
+    },
+    {
+        "input": "豬肉",
+        "error": "代理程式執行錯誤：local variable 'res' referenced before assignment"
+    },
+    {
+        "input": "食譜 豬肉",
+        "error": "代理程式執行錯誤：local variable 'res' referenced before assignment"
+    },
+    {
+        "input": "豬肉",
+        "error": "代理程式執行錯誤：local variable 'res' referenced before assignment"
+    }
+]

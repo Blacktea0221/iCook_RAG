@@ -1,4 +1,5 @@
 import sys, os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 # main.py
 import json
@@ -23,8 +24,14 @@ from scripts.RAG.search_engine import (
 
 load_dotenv()
 
+# 修正檔案路徑：使用絕對路徑
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+classify_map_path = os.path.join(
+    project_root, "data", "embeddings", "Meat and Vegetarian.json"
+)
+
 # 只讀取本地 classify_map（沿用你原本的設定）
-with open("data/embeddings/Meat and Vegetarian.json", "r", encoding="utf-8") as f:
+with open(classify_map_path, "r", encoding="utf-8") as f:
     CLASSIFY_MAP = json.load(f)
 
 CLASS_DICT = {"素食", "葷食"}

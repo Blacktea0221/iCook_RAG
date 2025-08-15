@@ -1,101 +1,140 @@
-import glob
-import json
 import os
-import re
-import subprocess
-
+from dotenv import load_dotenv
+import psycopg2
 import pandas as pd
+import re
+import openai
 from tqdm import tqdm
+import json
+import math
 
-# 1. 載入你的詳細食材 CSV
-#    從專案根目錄打開 data/clean/...，並改用分號分隔
-RAW_DIR = "../../data/raw"
-CSV_PATTERN = "*_食譜資料.csv"
-all_dfs = []
-for csv_path in glob.glob(os.path.join(RAW_DIR, CSV_PATTERN)):
-    # 從檔名解析出 vege_name，例如 "九層塔"
-    vege_name = os.path.basename(csv_path).split("_")[0]
-    df = pd.read_csv(csv_path, sep=";", engine="python", encoding="utf-8")
-    df["vege_name"] = vege_name  # 如果需要後面用到 vege_name
-    all_dfs.append(df)
+# --- 讀取環境變數 ---
+load_dotenv()
 
-# 將所有菜種的 DataFrame 串成一個大表
-df = pd.concat(all_dfs, ignore_index=True)
+DB_CONFIG = {
+    "host": os.getenv("DB_HOST"),
+    "port": int(os.getenv("DB_PORT")),
+    "dbname": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+}
 
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# 確認你的欄位名稱，就是剛剛 pandas 讀出的 columns：
-id_col = "id"
-ingr_col = "預覽食材"
+# --- 可自行維護豬肉製品清單 ---
+PORK_PRODUCTS = [
+    "豬肉",
+    "豬排",
+    "五花肉",
+    "絞肉",
+    "排骨",
+    "培根",
+    "火腿",
+    "香腸",
+    "臘肉",
+    "貢丸",
+    "豬肋排",
+    "豬里脊",
+    "豬腿肉",
+    "豬腰",
+    "豬肝",
+    "豬心",
+    "豬腳",
+    "豬耳朵",
+    "豬尾巴",
+    "豬油",
+]
 
-# 2. 定義系統提示（system prompt）
-system_prompt = (
+# --- 系統提示 ---
+system_prompt_simple = (
     "你是一個菜譜分類器，僅能二選一：素食 或 葷食。\n"
-    "遇到這些蔬菜要判斷葷食:蔥 , 蒜 , 韭菜 , 洋蔥 "
-    "請**只**回傳「素食」或「葷食」兩字，"
-    "不要任何多餘文字、思考過程、解釋或引號。"
+    "判斷規則：如任一食材含肉類、魚類、海鮮或五辛（蔥, 蒜, 韭菜, 洋蔥, 香菜），或含下列調味料：魚露, 蝦醬, 沙茶醬, 雞精, 雞粉, 雞湯塊, 豬油, 肉骨湯，則判定為葷食；否則為素食。\n"
+    "請先依食譜 ID 聚合該食譜所有食材，再進行判斷。\n"
+    "請**只**回傳每筆食譜分類（素食 或 葷食），每筆一行，不要多餘文字、解釋或引號。\n"
+    "格式：每行開頭為食譜 ID，再空格，再分類。例如：123 葷食"
 )
 
+# --- 非素食調味料 ---
+NON_VEGE_SEASONINGS = [
+    "魚露",
+    "蝦醬",
+    "沙茶醬",
+    "雞精",
+    "雞粉",
+    "雞湯塊",
+    "豬油",
+    "肉骨湯",
+]
 
-def extract_label(text: str) -> str:
-    """
-    从模型输出里抽取最后一个出现的“素食”或“葷食”。
-    如果都没找到，就返回空串。
-    """
-    matches = re.findall(r"(素食|葷食)", text)
-    return matches[-1] if matches else ""
+
+# --- 從資料庫抓取食材 ---
+def fetch_ingredients():
+    conn = psycopg2.connect(**DB_CONFIG)
+    # === 測試模式抓前 200 筆 ===
+    query = "SELECT recipe_id, preview_tag FROM ingredient LIMIT 50;"
+    # === 正式模式抓全部 ===
+    # query = "SELECT recipe_id, preview_tag FROM ingredient;"
+    df = pd.read_sql(query, conn)
+    conn.close()
+    return df
 
 
-def classify_with_ollama(recipe_id: str, ingredients: str) -> str:
-    user_prompt = f"食譜 ID：{recipe_id}\n食材列表：{ingredients}"
-    full_prompt = system_prompt + "\n\n" + user_prompt
+# --- 批次分類函數 ---
+def classify_batch(batch_df: pd.DataFrame) -> dict:
+    # 準備 user prompt
+    user_prompt = ""
+    for row in batch_df.itertuples():
+        user_prompt += f"{row.recipe_id} {row.preview_tag}\n"
 
-    # 明确接管 stdout/stderr，并用 UTF-8 解码
-    proc = subprocess.run(
-        ["ollama", "run", "qwen3:4b-q4_K_M", full_prompt],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        encoding="utf-8",
-        errors="ignore",  # 或 "replace"
+    # 呼叫模型
+    response = openai.chat.completions.create(
+        model="gpt-4.1-nano",
+        messages=[
+            {"role": "system", "content": system_prompt_simple},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0,
     )
 
-    if proc.returncode != 0:
-        print(f"[ERROR] ollama failed (code={proc.returncode}):")
-        print(proc.stderr)
-        return ""
+    raw_text = response.choices[0].message.content.strip()
+    lines = raw_text.splitlines()
 
-    # 这里 proc.stdout 一定是 str，不会再是 None
-    raw = proc.stdout.strip()
-    label = extract_label(raw)
-    if not label:
-        print(f"[WARN] 无法从模型输出中找到标签，原始输出：{raw!r}")
-    return label
+    result = {}
+    for line in lines:
+        # line 範例: "123 葷食"
+        match = re.match(r"(\S+)\s*(素食|葷食)", line)
+        if match:
+            rid, label = match.groups()
+            ingredients = batch_df.loc[
+                batch_df["recipe_id"] == rid, "preview_tag"
+            ].values[0]
+            vegetarian = True if label == "素食" else False
+            uses_pork = any(re.search(prod, ingredients) for prod in PORK_PRODUCTS)
+            # 補強：非素食調味料
+            if any(re.search(item, ingredients) for item in NON_VEGE_SEASONINGS):
+                vegetarian = False
+            result[rid] = {"vegetarian": vegetarian, "uses_pork": uses_pork}
+    return result
 
 
-# 3. 逐行執行分類並存回 DataFrame
-
+# --- 執行分類 ---
+df = fetch_ingredients()
 result_dict = {}
-results = []
-for _, row in tqdm(df.iterrows(), total=len(df), desc="分類中"):
-    rid = str(row[id_col])
-    ingredients = row[ingr_col]
-    label = classify_with_ollama(rid, ingredients)
-    # optional: print(f"ID={rid} … ->  {label}")
-    results.append(label)
 
-    diet = "vegetarian" if label == "素食" else "non_vegetarian"
-    uses_pork = bool(re.search(r"豬肉|豬排|五花肉|絞肉|排骨", row[ingr_col]))
-    result_dict[rid] = {"diet": diet, "uses_pork": uses_pork}
+batch_size = 50
+num_batches = math.ceil(len(df) / batch_size)
 
-df["素葷分類"] = results
+for i in tqdm(range(num_batches), desc="批次分類中"):
+    batch_df = df.iloc[i * batch_size : (i + 1) * batch_size]
+    batch_result = classify_batch(batch_df)
+    result_dict.update(batch_result)
 
-
-# 确保 output 目录存在
-out_dir = "../../data/embeddings"
+# --- 4. 存 JSON（保留原段落） ---
+out_dir = "data/embeddings"
 os.makedirs(out_dir, exist_ok=True)
 
-# 写入 Meat and Vegetarian.json
-out_path = os.path.join(out_dir, "Meat and Vegetarian.json")
+out_path = os.path.join(out_dir, "Meat_and_Vegetarian.json")
 with open(out_path, "w", encoding="utf-8") as jf:
     json.dump(result_dict, jf, ensure_ascii=False, indent=2)
 
-print(f"已儲存 Meat and Vegetarian.json 到：{out_path}")
+print(f"JSON 生成位置：{os.path.abspath(out_path)}")
