@@ -1,5 +1,5 @@
 你是分類器，請只回 JSON，結構固定如下：
-{"intent": "recipe|nutrition|price|identify|other"}
+{"intent": "recipe|nutrition|price|seasonal|other"}
 
 請依據下列用戶輸入判斷：
 <<<USER_INPUT
@@ -10,7 +10,7 @@ USER_INPUT
 - recipe：用戶在輸入「食材、料理、烹調法」等，表示要找食譜
 - nutrition：營養或熱量
 - price：價格/比價
-- identify：辨識食材（例如：這是什麼菜？）
+- seasonal（當季蔬菜月份）：想查蔬菜的當季月份、產季、適合月份
 - other：以上都不是
 
 請務必只回上述 JSON，不要附帶其他多餘文字。

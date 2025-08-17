@@ -260,7 +260,7 @@ def tag_then_vector_rank(
             continue
         results.append(
             {
-                "id": rid,
+                "id": int(rid) if str(rid).isdigit() else rid,
                 "tag": tag_selected_by_id.get(rid),
                 "vege_name": vege_by_id.get(rid),
                 "score": score,

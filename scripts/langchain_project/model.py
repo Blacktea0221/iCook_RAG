@@ -1,4 +1,12 @@
 # scripts/langchain_project/model.py
+"""
+集中管理對話模型（LLM）的建立。
+支援三種 profile：
+- "router":     低溫度、短輸出、只做分類
+- "sub_router": 低溫度、短輸出、做 recipe 子路由分類
+- "presenter":  中低溫度、較自然的摘要輸出
+- 其他值:       使用環境變數 OPENAI_* 的一般預設
+"""
 import os
 from typing import Literal, Optional
 
@@ -7,47 +15,38 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
-# 統一從 .env 讀取設定
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 OPENAI_TEMPERATURE = float(os.getenv("OPENAI_TEMPERATURE", "0.2"))
 OPENAI_MAX_TOKENS = int(os.getenv("OPENAI_MAX_TOKENS", "800"))
-OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")  # 可選，預設官方端點
-
-Role = Literal["router", "presenter", "default"]
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")  # 可選
 
 
 def get_chat_model(
-    role: Role = "default",
+    profile: Optional[Literal["router", "sub_router", "presenter"]] = None,
     *,
     model: Optional[str] = None,
     temperature: Optional[float] = None,
     max_tokens: Optional[int] = None,
 ):
     """
-    回傳配置好的 ChatOpenAI。
-    role 可以快速帶入不同的溫度等預設：
-      - router: 類分類/路由，較保守（溫度 0）
-      - presenter: 摘要/重寫，略高（溫度 0.3）
-      - default: 用 .env 預設
+    依 profile 回傳 ChatOpenAI。
+    - 可使用 OPENAI_BASE_URL 指向兼容的供應商（如自架端點）
     """
-    if not OPENAI_API_KEY:
-        raise RuntimeError(
-            "OPENAI_API_KEY 未設定。請確認 .env 內已有 OPENAI_API_KEY。"
-        )
-
     m = model or OPENAI_MODEL
-    if role == "router":
-        t = 0.0
-        mt = max_tokens or 256
-    elif role == "presenter":
-        t = 0.3
-        mt = max_tokens or OPENAI_MAX_TOKENS
-    else:
-        t = temperature if temperature is not None else OPENAI_TEMPERATURE
-        mt = max_tokens or OPENAI_MAX_TOKENS
 
-    # 依需求可加 base_url、timeout、重試等參數
+    if profile in ("router", "sub_router"):
+        # 盡量穩定、只做結構化輸出
+        t = 0.0
+        mt = max_tokens or 400
+    elif profile == "presenter":
+        # 摘要希望自然一些
+        t = 0.3
+        mt = max_tokens or 900
+    else:
+        t = OPENAI_TEMPERATURE if temperature is None else temperature
+        mt = OPENAI_MAX_TOKENS if max_tokens is None else max_tokens
+
     return ChatOpenAI(
         model=m,
         temperature=t,
