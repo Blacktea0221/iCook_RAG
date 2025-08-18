@@ -71,9 +71,9 @@ NON_VEGE_SEASONINGS = [
 def fetch_ingredients():
     conn = psycopg2.connect(**DB_CONFIG)
     # === 測試模式抓前 200 筆 ===
-    query = "SELECT recipe_id, preview_tag FROM ingredient LIMIT 50;"
+    # query = "SELECT recipe_id, preview_tag FROM ingredient LIMIT 51 OFFSET 999;"
     # === 正式模式抓全部 ===
-    # query = "SELECT recipe_id, preview_tag FROM ingredient;"
+    query = "SELECT recipe_id, preview_tag FROM ingredient;"
     df = pd.read_sql(query, conn)
     conn.close()
     return df

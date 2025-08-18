@@ -5,4 +5,4 @@
 *.webp
 .env
 venv/
-
+venv310/
