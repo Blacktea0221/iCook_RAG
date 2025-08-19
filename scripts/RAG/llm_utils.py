@@ -1,16 +1,18 @@
 import json
 import os
 import re
-import subprocess
 import textwrap
+from typing import List, Dict, Any, Set
 
 from dotenv import load_dotenv
+import openai
 
 load_dotenv()
 
-DEFAULT_OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:4b-q4_K_M")
+openai.api_key = os.getenv("OPENAI_API_KEY")
+DEFAULT_OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-nano")
 
-# ========== 食材抽取 LLM PROMPT ==========
+# ========== 食材抽取 LLM PROMPT (使用OpenAI) ==========
 
 LLM_PROMPT_INGREDIENT = """你是食材抽取助手，只回 JSON 陣列。從句子中找出食材名稱（只要名稱），依序輸出：
 ---
@@ -18,41 +20,56 @@ LLM_PROMPT_INGREDIENT = """你是食材抽取助手，只回 JSON 陣列。從�
 ---"""
 
 
-def call_llm_extract_ingredients(text, ingredient_set, model_name=None):
-    model = model_name or DEFAULT_OLLAMA_MODEL
+def call_llm_extract_ingredients(
+    text: str, ingredient_set: set, model_name: str = None
+) -> List[str]:
     """
-    用 LLM 進行關鍵字食材抽取，回傳只在 ingredient_set 內的詞
+    用 LLM 進行關鍵字食材抽取，回傳只在 ingredient_set 內的詞 (使用 OpenAI)
     """
-    prompt = LLM_PROMPT_INGREDIENT.format(text=text)
-    res = subprocess.run(
-        ["ollama", "run", model, prompt],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    ).stdout
+    model = model_name or DEFAULT_OPENAI_MODEL
+    prompt_text = LLM_PROMPT_INGREDIENT.format(text=text)
+
     try:
-        items = json.loads(res)
-    except json.JSONDecodeError:
-        items = re.split(r"[，,]\s*", res)
+        response = openai.chat.completions.create(
+            model=model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "你是一個食材抽取助手，只會回傳 JSON 陣列。",
+                },
+                {"role": "user", "content": prompt_text},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"},
+        )
+        result_json = json.loads(response.choices[0].message.content)
+        items = result_json.get("ingredients", [])
+    except (json.JSONDecodeError, openai.APIError) as e:
+        print(f"LLM抽取食材時發生錯誤: {e}")
+        items = re.split(r"[，,]\s*", text)
+
     return [i.strip() for i in items if i.strip() in ingredient_set]
 
 
-# ========== 智能推薦食譜 LLM PROMPT ==========
+# ========== 智能推薦食譜 LLM PROMPT (使用OpenAI) ==========
 
 
-def call_ollama_llm(user_text, recipes, model=None):
-    model = model or DEFAULT_OLLAMA_MODEL
+def call_openai_llm(user_text: str, recipes: List[Dict], model: str = None) -> str:
     """
-    用 LLM 幫使用者推薦料理（文字生成說明）
+    用 LLM 幫使用者推薦料理（文字生成說明）(使用 OpenAI)
     recipes: list of dict (通常來自 search_engine.py 的檢索結果)
+    回傳 JSON 字串
     """
-    if not recipes:
-        return "找不到符合的食譜。"
+    model = model or DEFAULT_OPENAI_MODEL
 
-    # 組裝 context，每道菜名稱＋主要食材（只需重點資訊即可）
+    if not recipes:
+        # 如果沒有食譜，回傳一個包含錯誤訊息的 JSON
+        return json.dumps({"error": "找不到符合的食譜。"}, ensure_ascii=False, indent=2)
+
     context_blocks = []
     for r in recipes:
-        rec = r["recipe"]
+        # 確保 r["recipe"] 存在
+        rec = r.get("recipe", {})
         title = (rec.get("recipe") or rec.get("食譜名稱") or "").strip()
         ingredients_str = "、".join(
             (i.get("ingredient") or i.get("ingredient_name") or "").strip()
@@ -66,45 +83,64 @@ def call_ollama_llm(user_text, recipes, model=None):
         )
     context_text = "\n\n---\n\n".join(context_blocks)
 
-    prompt = (
-        f"以下是料理食譜的資訊（每道以【標題】與 ID 表示）：\n{context_text}\n\n"
-        f"請扮演料理專家，依據以上**僅提供的資訊**，輸出條列清單：\n"
-        f"1) 每條以阿拉伯數字編號\n"
-        f"2) **標題請精確複製【】內文字，不可改寫或生成新標題**\n"
-        f"3) 標題後標註其 ID（如： (ID: 474705) ）\n"
-        f"4) 每條再用約 20～30 字摘要主要做法或重點（不可捏造額外材料）\n"
-        f"5) 只使用繁體中文\n"
-        f"6) 若內容類似可合併成一條，但保留所有涉及的 ID\n"
-        f"7) 僅能使用提供的食譜與資訊，不能自行補充\n"
+    # 修正：更新 system_message 以要求 JSON 格式輸出
+    system_message = (
+        f'你是一位料理專家，請根據提供的料理食譜資訊（每道以【標題】與 ID 表示）來生成推薦。請嚴格以 JSON 格式回傳，格式為: `{{ "recommendations": [ ... ] }}`。\n'
+        f'在 `recommendations` 陣列中，每筆物件包含 `"title"`、`"id"`、`"summary"` 三個鍵。\n\n'
+        f"以下是料理食譜的資訊：\n{context_text}\n\n"
+        f"請遵循以下規則來生成 JSON 內容：\n"
+        f'1. **`"title"` 必須精確複製【】內文字，不可改寫。**\n'
+        f'2. **`"id"` 必須精確複製食譜的 ID。**\n'
+        f'3. **`"summary"` 用約 20～30 字總結主要做法或重點（不可捏造額外材料）。**\n'
+        f"4. **只使用繁體中文。**\n"
+        f"5. **如果內容類似，可以合併成一條推薦，但 `id` 欄位需以陣列形式包含所有相關 ID。**\n"
+        f"6. **僅能使用提供的食譜與資訊，不能自行補充。**\n"
     )
 
     try:
-        result = subprocess.run(
-            ["ollama", "run", model, prompt],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            check=True,
+        response = openai.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_text},
+            ],
+            temperature=0.7,
+            max_tokens=500,
+            # 修正：設定 response_format 為 JSON 物件
+            response_format={"type": "json_object"},
         )
-        return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        return f"Ollama 發生錯誤：{e.stderr.strip()}"
+        # LLM 的回傳已經是 JSON 格式字串，直接回傳即可
+        return response.choices[0].message.content.strip()
+    except openai.APIError as e:
+        print(f"OpenAI API 錯誤：{e}")
+        return json.dumps(
+            {"error": f"OpenAI API 錯誤：{str(e)}"}, ensure_ascii=False, indent=2
+        )
+    except Exception as e:
+        print(f"其他錯誤：{e}")
+        return json.dumps(
+            {"error": f"發生未知錯誤：{str(e)}"}, ensure_ascii=False, indent=2
+        )
 
 
-# ========== Google 搜尋摘要歸納 LLM PROMPT ==========
+# ========== Google 搜尋摘要歸納 LLM PROMPT (使用OpenAI) ==========
 
 
-def summarize_search_results(user_query, search_results, model="qwen3:4b-q4_K_M"):
+def summarize_search_results(
+    user_query: str, search_results: List[Dict], model: str = None
+) -> str:
     """
-    把多筆 Google 搜尋結果交給 LLM，讓他條列式總結
+    把多筆 Google 搜尋結果交給 LLM，讓他條列式總結 (使用 OpenAI)
     search_results: list of dict (title, link, snippet)
     """
+    model = model or DEFAULT_OPENAI_MODEL
+
     blocks = []
     for r in search_results:
         blocks.append(f"【{r['title']}】\n{r['snippet']}\nLink: {r['link']}")
     context = "\n\n---\n\n".join(blocks)
 
-    prompt = textwrap.dedent(
+    system_message = textwrap.dedent(
         f"""\n你將獲得來自 Google 搜尋「{user_query} 食譜」的結果摘要（如下 %%% 所示），請依據**僅提供的資訊**產出條列式清單。
 
 ✅ 每筆輸出請嚴格遵循以下格式（用全形逗號分隔）：
@@ -123,13 +159,20 @@ def summarize_search_results(user_query, search_results, model="qwen3:4b-q4_K_M"
 """
     )
 
-    res = subprocess.run(
-        ["ollama", "run", model, prompt],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
-    return res.stdout.strip()
-
-
-# ========== 你可以根據需求繼續擴充更多 LLM 互動函式 ==========
+    try:
+        response = openai.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_query},
+            ],
+            temperature=0.7,
+            max_tokens=500,
+        )
+        return response.choices[0].message.content.strip()
+    except openai.APIError as e:
+        print(f"OpenAI API 錯誤：{e}")
+        return "很抱歉，在總結搜尋結果時發生錯誤。請稍後再試。"
+    except Exception as e:
+        print(f"其他錯誤：{e}")
+        return "很抱歉，發生了未知的錯誤。"

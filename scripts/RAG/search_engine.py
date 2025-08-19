@@ -5,6 +5,7 @@ import jieba
 import numpy as np
 import psycopg2
 from dotenv import load_dotenv
+from typing import List, Dict, Any, Set
 
 # from .vectorstore_utils import search_vectorstore
 from .vectorstore_utils import embed_text_to_np
@@ -108,7 +109,7 @@ def get_recipe_by_id(recipe_id: int):
 # =============== 檢索 ===============
 
 
-### 修改點：工具函式—把 pgvector 的 text 轉回 numpy 向量
+### 工具函式—把 pgvector 的 text 轉回 numpy 向量
 def _parse_pgvector_text(s: str) -> np.ndarray:
     """
     解析 SELECT embedding::text 取得的字串，例如 '[0.1, -0.2, ...]'
@@ -122,7 +123,7 @@ def _parse_pgvector_text(s: str) -> np.ndarray:
     return arr
 
 
-### 修改點：查 alias，回傳「輸入 tokens + 擴充別名」的集合
+### 查 alias，回傳「輸入 tokens + 擴充別名」的集合
 def _expand_aliases(tokens):
     if not tokens:
         return set()
@@ -150,7 +151,7 @@ def _expand_aliases(tokens):
     return expanded
 
 
-### 修改點：第一階段 Tag 候選（OR）
+### 第一階段 Tag 候選（OR）
 def _candidate_recipe_ids_by_tag(expanded_terms, limit_per_term=200):
     """
     在 ingredient_vectors 表裡以 tag 等值/模糊匹配，回傳候選 recipe_id（去重）。
@@ -184,36 +185,41 @@ def _candidate_recipe_ids_by_tag(expanded_terms, limit_per_term=200):
     return [r["recipe_id"] for r in rows]
 
 
-### 修改點：取出候選的所有 tag 向量（之後會用「整句向量」去比對）
-def _fetch_tag_embeddings_for_recipes(recipe_ids):
+### 取出候選的所有 tag 向量（之後會用「整句向量」去比對）
+# 修正：新增參數 final_candidate_ids，以篩選檢索範圍
+def _fetch_tag_embeddings_for_recipes(final_candidate_ids: List[int]):
     """
-    回傳 [(recipe_id, tag, vege_name, embedding(np.ndarray)), ...]
+    回傳 [(recipe_id, tag, vege_id, embedding(np.ndarray)), ...]
     """
-    if not recipe_ids:
+    if not final_candidate_ids:
         return []
 
     sql = """
-        SELECT recipe_id, tag, vege_name, embedding::text AS embedding_text
+        SELECT recipe_id, tag, vege_id, embedding::text AS embedding_text
         FROM ingredient_vectors
         WHERE recipe_id = ANY(%s)
     """
-    rows = fetch_all(sql, (recipe_ids,))
+    rows = fetch_all(sql, (final_candidate_ids,))
     out = []
     for r in rows:
         vec = _parse_pgvector_text(r["embedding_text"])
-        out.append((r["recipe_id"], r["tag"], r["vege_name"], vec))
+        out.append((r["recipe_id"], r["tag"], r["vege_id"], vec))
     return out
 
 
-### 修改點：主流程—先 Tag 縮小，再以「整句向量」對候選排序
+### 主流程—先 Tag 縮小，再以「整句向量」對候選排序
+# 修正：新增參數 candidate_ids，以接收來自 rag_special 的篩選結果
 def tag_then_vector_rank(
-    user_text: str, tokens_from_jieba, top_k: int = 5  # 你抽到的關鍵詞列表
+    user_text: str,
+    tokens_from_jieba: List[str],
+    candidate_ids: List[int] = None,  # 新增參數
+    top_k: int = 5,
 ):
     """
     1) 擴充別名，先在 ingredient_vectors 用 tag 做 OR 篩選 -> 候選 recipe_id
     2) 將 user_text 轉向量
     3) 取出候選 recipe 的所有 tag 向量，分別與 user_text 向量做 cosine
-       -> 對同一個 recipe 取「最大相似」作為該 recipe 的分數
+        -> 對同一個 recipe 取「最大相似」作為該 recipe 的分數
     4) 按分數排序取前 top_k，並回傳完整食譜（get_recipe_by_id）
     """
     # 1) 擴充 tag
@@ -224,22 +230,33 @@ def tag_then_vector_rank(
         expanded = _expand_aliases(rough_tokens)
 
     # 2) 先用 Tag OR 取候選
-    candidate_ids = _candidate_recipe_ids_by_tag(expanded)
-    if not candidate_ids:
-        return []  # 完全沒命中，就讓外層走你的「全向量備援」或 Google 搜尋
+    initial_candidate_ids = _candidate_recipe_ids_by_tag(expanded)
+
+    # 修正：將初始候選集與外部傳入的候選集取交集
+    if candidate_ids is not None and initial_candidate_ids:
+        final_candidate_ids = list(
+            set(initial_candidate_ids).intersection(set(candidate_ids))
+        )
+    elif candidate_ids is not None:
+        final_candidate_ids = candidate_ids
+    else:
+        final_candidate_ids = initial_candidate_ids
+
+    if not final_candidate_ids:
+        return []
 
     # 3) user_text -> 向量
     q = embed_text_to_np(user_text)
     q_norm = np.linalg.norm(q) + 1e-12
 
     # 4) 取候選的 tag 向量；以「recipe_id 最大相似分」做排序分數
-    rows = _fetch_tag_embeddings_for_recipes(candidate_ids)
+    rows = _fetch_tag_embeddings_for_recipes(final_candidate_ids)
 
     best_score_by_id = {}
     tag_selected_by_id = {}
     vege_by_id = {}
 
-    for rid, tag, vege_name, vec in rows:
+    for rid, tag, vege_id, vec in rows:
         if vec.size == 0:
             continue
         v_norm = np.linalg.norm(vec) + 1e-12
@@ -247,7 +264,7 @@ def tag_then_vector_rank(
         if (rid not in best_score_by_id) or (score > best_score_by_id[rid]):
             best_score_by_id[rid] = score
             tag_selected_by_id[rid] = tag
-            vege_by_id[rid] = vege_name
+            vege_by_id[rid] = vege_id
 
     # 5) 排序取前 K
     ranked = sorted(best_score_by_id.items(), key=lambda x: x[1], reverse=True)[:top_k]
@@ -262,7 +279,7 @@ def tag_then_vector_rank(
             {
                 "id": rid,
                 "tag": tag_selected_by_id.get(rid),
-                "vege_name": vege_by_id.get(rid),
+                "vege_id": vege_by_id.get(rid),
                 "score": score,
                 "recipe": recipe,
             }
