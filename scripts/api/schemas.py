@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class RecipeHit(BaseModel):
     id: int
     tag: Optional[str] = None
-    vege_name: Optional[str] = None
+    vege_id: Optional[str] = None
     score: float
     recipe: Dict[str, Any]  # 直接包完整食譜結構
 

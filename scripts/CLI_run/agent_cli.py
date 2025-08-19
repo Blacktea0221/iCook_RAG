@@ -18,8 +18,10 @@ from scripts.langchain_project.APIservice.agent_service import (
     _classify_sub_intent,
     _present_summary_text,
 )
+from scripts.langchain_project.APIservice.recipe_name_lookup import (
+    search_by_recipe_name,
+)
 from scripts.langchain_project.model import get_chat_model
-from scripts.langchain_project.services.recipe_name_lookup import search_by_recipe_name
 from scripts.RAG import search_engine
 
 load_dotenv()

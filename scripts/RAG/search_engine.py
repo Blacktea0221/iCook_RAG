@@ -187,13 +187,13 @@ def _candidate_recipe_ids_by_tag(expanded_terms, limit_per_term=200):
 ### 修改點：取出候選的所有 tag 向量（之後會用「整句向量」去比對）
 def _fetch_tag_embeddings_for_recipes(recipe_ids):
     """
-    回傳 [(recipe_id, tag, vege_name, embedding(np.ndarray)), ...]
+    回傳 [(recipe_id, tag, vege_id, embedding(np.ndarray)), ...]
     """
     if not recipe_ids:
         return []
 
     sql = """
-        SELECT recipe_id, tag, vege_name, embedding::text AS embedding_text
+        SELECT recipe_id, tag, vege_id, embedding::text AS embedding_text
         FROM ingredient_vectors
         WHERE recipe_id = ANY(%s)
     """
@@ -201,7 +201,7 @@ def _fetch_tag_embeddings_for_recipes(recipe_ids):
     out = []
     for r in rows:
         vec = _parse_pgvector_text(r["embedding_text"])
-        out.append((r["recipe_id"], r["tag"], r["vege_name"], vec))
+        out.append((r["recipe_id"], r["tag"], r["vege_id"], vec))
     return out
 
 
@@ -239,7 +239,7 @@ def tag_then_vector_rank(
     tag_selected_by_id = {}
     vege_by_id = {}
 
-    for rid, tag, vege_name, vec in rows:
+    for rid, tag, vege_id, vec in rows:
         if vec.size == 0:
             continue
         v_norm = np.linalg.norm(vec) + 1e-12
@@ -247,7 +247,7 @@ def tag_then_vector_rank(
         if (rid not in best_score_by_id) or (score > best_score_by_id[rid]):
             best_score_by_id[rid] = score
             tag_selected_by_id[rid] = tag
-            vege_by_id[rid] = vege_name
+            vege_by_id[rid] = vege_id
 
     # 5) 排序取前 K
     ranked = sorted(best_score_by_id.items(), key=lambda x: x[1], reverse=True)[:top_k]
@@ -262,7 +262,7 @@ def tag_then_vector_rank(
             {
                 "id": int(rid) if str(rid).isdigit() else rid,
                 "tag": tag_selected_by_id.get(rid),
-                "vege_name": vege_by_id.get(rid),
+                "vege_id": vege_by_id.get(rid),
                 "score": score,
                 "recipe": recipe,
             }

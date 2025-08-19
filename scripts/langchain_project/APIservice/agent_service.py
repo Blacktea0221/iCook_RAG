@@ -66,11 +66,12 @@ def _normalize_topk(k: int) -> int:
 
 # ==== 第一層：意圖判斷 ====
 def _classify_intent(text: str) -> str:
-    msg = [SystemMessage(content=ROUTER_PROMPT.format(text=text))]
+    # 只替換 {text}，不要用 .format 以免吃掉 JSON 的大括號
+    prompt = ROUTER_PROMPT.replace("{text}", text)
+    msg = [SystemMessage(content=prompt)]
     resp = llm_router.invoke(msg)
     data = _json_safe(resp.content)
     intent = (data.get("intent") or "other").strip()
-    # 正規化 seasonal → 當季蔬菜月份
     if intent in ("seasonal", "season", "當季蔬菜月份"):
         return "當季蔬菜月份"
     return intent
@@ -78,10 +79,10 @@ def _classify_intent(text: str) -> str:
 
 # ==== 第二層：子路由 ====
 def _classify_sub_intent(text: str) -> SubRoute:
-    msg = [SystemMessage(content=SUB_ROUTER_PROMPT.format(text=text))]
+    prompt = SUB_ROUTER_PROMPT.replace("{text}", text)
+    msg = [SystemMessage(content=prompt)]
     resp = llm_sub_router.invoke(msg)
     data = _json_safe(resp.content)
-    # 基本填補
     sub = {
         "sub_intent": data.get("sub_intent", "食譜查詢"),
         "name_query": data.get("name_query"),
