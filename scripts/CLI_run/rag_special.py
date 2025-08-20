@@ -36,7 +36,32 @@ DIET_KEYWORDS = {
 }
 
 
-# 修正：擴充 ingredient_set，加入更多食材
+# 新增：定義豬肉製品相關的關鍵字集合
+PORK_PRODUCTS = {
+    "豬肉",
+    "豬油",
+    "培根",
+    "火腿",
+    "香腸",
+    "豬腳",
+    "豬尾巴",
+    "豬耳朵",
+    "豬腸",
+    "豬排",
+    "豬里脊",
+    "豬腿肉",
+    "豬腰",
+    "豬肝",
+    "豬心",
+    "豬肋排",
+    "豬五花",
+    "豬絞肉",
+    "豬排骨",
+    "豬油",
+    "貢丸",
+}
+
+# 修正：確保 ingredient_set 被正確定義
 ingredient_set = {
     "番茄",
     "雞蛋",
@@ -49,6 +74,10 @@ ingredient_set = {
     "蒜苗",
     "豬油",
     "韭菜",
+    "培根",
+    "火腿",
+    "香腸",
+    "豬腳",
 }
 
 
@@ -98,16 +127,16 @@ def group_retrieval(raw_input_text: str, top_k: int = 3):
 
     # 偵測關鍵字，用來處理衝突
     keywords = pull_ingredients(raw_input_text, ingredient_set)
-    contains_pork_ingr = any(kw in keywords for kw in ["豬肉", "豬油"])
+    # 修正：用 PORK_PRODUCTS 集合判斷是否包含任何豬肉製品
+    contains_pork_ingr = any(k in keywords for k in PORK_PRODUCTS)
     contains_beef_ingr = "牛肉" in keywords
 
     # 2. 處理嚴謹條件衝突
     # 2-1) 素食優先於任何肉類
     if is_vegetarian and (contains_pork_ingr or contains_beef_ingr):
         print("偵測到素食與肉類衝突，優先考慮素食，忽略肉類關鍵字。")
-        keywords = [
-            k for k in keywords if k not in ["豬肉", "豬油", "牛肉"]
-        ]  # 清空肉類關鍵字
+        # 修正：使用 PORK_PRODUCTS 集合來排除關鍵字
+        keywords = [k for k in keywords if k not in PORK_PRODUCTS and k != "牛肉"]
     # 2-2) 葷食與素食衝突
     if is_vegetarian and is_non_vegetarian:
         return json.dumps(
@@ -118,7 +147,8 @@ def group_retrieval(raw_input_text: str, top_k: int = 3):
     # 2-3) 穆斯林(無豬)優先於豬肉
     if is_no_pork and contains_pork_ingr:
         print("偵測到無豬肉與豬肉關鍵字衝突，優先考慮無豬肉，忽略豬肉關鍵字。")
-        keywords = [k for k in keywords if k not in ["豬肉", "豬油"]]
+        # 修正：使用 PORK_PRODUCTS 集合來排除關鍵字
+        keywords = [k for k in keywords if k not in PORK_PRODUCTS]
 
     # 3. 建立所有食譜 ID 的集合作為篩選起點
     all_recipe_ids = set(CLASSIFY_MAP.keys())
@@ -181,7 +211,6 @@ def group_retrieval(raw_input_text: str, top_k: int = 3):
 
     print("正在對符合條件的食譜進行向量排序...")
 
-    # 修正：將 candidate_ids 傳遞給 tag_then_vector_rank
     results = tag_then_vector_rank(
         user_text=raw_input_text,
         tokens_from_jieba=keywords,
@@ -206,15 +235,18 @@ def test_group_retriever():
     print("--- 執行 3-2 群組檢索功能自動測試 ---")
 
     test_cases = [
-        "素食食譜，要有番茄",
-        "穆斯林想做蔥爆牛肉",
-        "不吃豬肉，我想要蔥爆牛肉",
+        # "素食食譜，要有番茄",
+        # "穆斯林想做蔥爆牛肉",
+        # "不吃豬肉，我想要蔥爆牛肉",
+        # 蒜末 蒜頭
         "我想要素食",
+        # 豬絞肉 豬肉片 梅花豬肉片
         "我想要穆斯林食譜",
         "素食食譜，但我想吃牛肉",
-        "我要素食，要有韭菜和豆腐",  # 新增測試案例
-        "我要穆斯林，想要豬油和醬油",  # 新增測試案例
-        "我想要素食，但我想吃雞蛋",  # 新增測試案例
+        "我要素食，要有洋蔥和豆腐",
+        "我要穆斯林，想要貢丸和醬油",
+        "我想要素食，但我想吃雞蛋",
+        "我要素食，有花椰菜胡蘿蔔",
     ]
 
     for case in test_cases:
