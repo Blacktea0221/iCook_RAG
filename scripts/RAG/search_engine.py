@@ -1,270 +1,338 @@
+# scripts/RAG/search_engine.py
+# -*- coding: utf-8 -*-
+"""
+搜尋引擎核心 API（被 LangChain Tools 呼叫）
+------------------------------------------------
+職責：封裝資料庫查詢、OR 召回、（可選的）向量重排、以及食譜資料讀取。
+**不要**在這裡做 LLM 摘要與呈現；上層 Orchestrator/Presenter 處理即可。
+
+你可以先用「簡易重排（標籤重合度）」跑通流程；之後有 pgvector 時，把
+`_rerank_by_vector` 的內容替換即可（其餘程式不用改）。
+"""
+from __future__ import annotations
+
+import math
 import os
 import re
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-import jieba
-import numpy as np
 import psycopg2
-from dotenv import load_dotenv
+import psycopg2.extras
 
-# from .vectorstore_utils import search_vectorstore
-from .vectorstore_utils import embed_text_to_np
-
-load_dotenv()
-
-DB_CONFIG = dict(
-    host=os.getenv("DB_HOST"),
-    port=int(os.getenv("DB_PORT", "5432")),
-    database=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),  # 缺就讓程式 fail-fast
-)
+# =========
+# 連線 & DB helpers
+# =========
 
 
-def fetch_one(query, params=None):
-    conn = psycopg2.connect(**DB_CONFIG)
-    cur = conn.cursor()
-    cur.execute(query, params or ())
-    row = cur.fetchone()
-    colnames = [desc[0] for desc in cur.description]
-    conn.close()
-    return dict(zip(colnames, row)) if row else None
-
-
-def fetch_all(query, params=None):
-    conn = psycopg2.connect(**DB_CONFIG)
-    cur = conn.cursor()
-    cur.execute(query, params or ())
-    rows = cur.fetchall()
-    colnames = [desc[0] for desc in cur.description]
-    conn.close()
-    return [dict(zip(colnames, row)) for row in rows]
-
-
-# =============== 關鍵字抽取相關 ===============
-
-
-def jieba_extract(text: str, ingredient_set: set) -> list:
-    clean = re.sub(r"[^\w\u4e00-\u9fff]+", " ", text)
-    tokens = jieba.lcut(clean, cut_all=False)
-    return [t for t in tokens if t in ingredient_set]
-
-
-def pull_ingredients(user_text: str, ingredient_set: set) -> list:
+def _get_dsn() -> str:
     """
-    關鍵字抽取，預設只用 Jieba（不自動 fallback LLM）
+    從環境變數讀取 PostgreSQL 連線資訊：
+    - PG_DSN（優先）或 PG_HOST/PG_PORT/PG_DB/PG_USER/PG_PASSWORD
     """
-    words = jieba_extract(user_text, ingredient_set)
-    return words
+    if os.getenv("PG_DSN"):
+        return os.getenv("PG_DSN")  # e.g. postgresql://user:pass@host:5432/db
+    host = os.getenv("PG_HOST", "127.0.0.1")
+    port = int(os.getenv("PG_PORT", "5432"))
+    db = os.getenv("PG_DB", "postgres")
+    user = os.getenv("PG_USER", "postgres")
+    pwd = os.getenv("PG_PASSWORD", "")
+    return f"host={host} port={port} dbname={db} user={user} password={pwd}"
 
 
-# =============== 食譜ID查詢 ===============
-### 修改點：用 main_recipe / ingredient / recipe_steps 三表重寫
-def get_recipe_by_id(recipe_id: int):
-    rid = str(recipe_id)
-    # 1) 主表：料理名稱（欄位名就叫 recipe）
-    rec = fetch_one(
-        "SELECT id, recipe, vege_id FROM main_recipe WHERE id = %s;",
-        (rid,),
-    )
-    if not rec:
-        return None
-
-    # 2) 預覽 tag（ingredient 表的 preview_tag）
-    tag_rows = fetch_all(
-        "SELECT preview_tag FROM ingredient WHERE recipe_id = %s AND preview_tag IS NOT NULL;",
-        (rid,),
-    )
-    preview_tags = [r["preview_tag"] for r in tag_rows]
-
-    # 3) 食材明細（ingredient 表的 ingredient 欄位）
-    ing_rows = fetch_all(
-        "SELECT ingredient FROM ingredient WHERE recipe_id = %s;",
-        (rid,),
-    )
-    # 這裡維持之前介面：recipe['ingredients'] 是 list[dict]
-    ingredients = [{"ingredient": r["ingredient"]} for r in ing_rows]
-
-    # 4) 步驟（recipe_steps：step_no、description）
-    step_rows = fetch_all(
-        "SELECT step_no, description FROM recipe_steps WHERE recipe_id = %s ORDER BY step_no;",
-        (rid,),
-    )
-    steps = [
-        {"step_no": r["step_no"], "description": r["description"]} for r in step_rows
-    ]
-
-    # 5) 組合回傳結構（盡量沿用舊鍵名，避免其他程式碼要大改）
-    recipe = {
-        "id": rec["id"],
-        "recipe": rec["recipe"],  # 料理名稱（舊程式若用 title，請同步調整）
-        "vege_id": rec["vege_id"],  # 你資料裡有這欄，就保留
-        "preview_tags": preview_tags,  # 來自 ingredient.preview_tag
-        "ingredients": ingredients,  # 來自 ingredient.ingredient
-        "steps": steps,  # 來自 recipe_steps
-    }
-    return recipe
+def _get_conn():
+    """取得 psycopg2 連線（每次用完即關閉；避免全域連線佔用）"""
+    return psycopg2.connect(_get_dsn())
 
 
-# =============== 檢索 ===============
-
-
-### 修改點：工具函式—把 pgvector 的 text 轉回 numpy 向量
-def _parse_pgvector_text(s: str) -> np.ndarray:
+def fetch_all(sql: str, params: Optional[Sequence[Any]] = None) -> List[Dict[str, Any]]:
     """
-    解析 SELECT embedding::text 取得的字串，例如 '[0.1, -0.2, ...]'
+    執行查詢並回傳 List[dict]，列名作為鍵。
+    方便 tools 與上層使用。
     """
-    s = s.strip()
-    if s.startswith("[") and s.endswith("]"):
-        s = s[1:-1]
-    if not s:
-        return np.zeros((0,), dtype="float32")
-    arr = np.fromstring(s, sep=",", dtype="float32")
-    return arr
+    with _get_conn() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(sql, params)
+            rows = cur.fetchall()
+    return [dict(r) for r in rows]
 
 
-### 修改點：查 alias，回傳「輸入 tokens + 擴充別名」的集合
-def _expand_aliases(tokens):
-    if not tokens:
-        return set()
+def fetch_one(
+    sql: str, params: Optional[Sequence[Any]] = None
+) -> Optional[Dict[str, Any]]:
+    """回傳單筆 dict 或 None。"""
+    with _get_conn() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(sql, params)
+            row = cur.fetchone()
+    return dict(row) if row else None
 
-    tokens_list = list(tokens)
-    like_patterns = [f"%{t}%" for t in tokens_list]
 
-    sql_eq = """
-        SELECT DISTINCT alias
-        FROM vege_alias
-        WHERE alias = ANY(%s)
+# =========
+# 食材抽取（由上層提供 ingredient_set 時效果最佳）
+# =========
+
+
+def pull_ingredients(user_text: str, ingredient_set: Optional[set] = None) -> List[str]:
     """
-    rows_eq = fetch_all(sql_eq, (tokens_list,))
-
-    sql_like = """
-        SELECT DISTINCT alias
-        FROM vege_alias
-        WHERE alias ILIKE ANY(%s)
+    使用者句子 → 食材 tokens
+    - 若提供 ingredient_set，會以「在字典中」做濾除，降低雜訊。
+    - 你已在 ingredient_utils 中把資料庫的食材灌進 jieba 字典。
     """
-    rows_like = fetch_all(sql_like, (like_patterns,))
-
-    expanded = set(tokens_list)
-    expanded.update(r["alias"] for r in rows_eq)
-    expanded.update(r["alias"] for r in rows_like)
-    return expanded
-
-
-### 修改點：第一階段 Tag 候選（OR）
-def _candidate_recipe_ids_by_tag(expanded_terms, limit_per_term=200):
-    """
-    在 ingredient_vectors 表裡以 tag 等值/模糊匹配，回傳候選 recipe_id（去重）。
-    預設用 OR（任何一個詞命中就收進候選）。
-    """
-    if not expanded_terms:
+    try:
+        import jieba  # 本地斷詞
+    except Exception:
         return []
 
-    # 用等值 + 模糊兩種，盡量撈到候選（避免 recall 太差）
-    parts = []
-    params = []
+    tokens = [t.strip() for t in jieba.lcut(user_text) if t.strip()]
+    if ingredient_set:
+        tokens = [t for t in tokens if t in ingredient_set]
+    # 去重、保序
+    seen = set()
+    uniq = []
+    for t in tokens:
+        if t not in seen:
+            seen.add(t)
+            uniq.append(t)
+    return uniq
 
-    parts.append("tag = ANY(%s)")
-    params.append(list(expanded_terms))
 
-    like_patterns = [f"%{t}%" for t in expanded_terms]
-    parts.append("tag ILIKE ANY(%s)")
-    params.append(like_patterns)
+# =========
+# OR 召回（ingredient / preview_tag）
+# =========
 
-    sql = f"""
-        SELECT DISTINCT recipe_id
-        FROM ingredient_vectors
-        WHERE ({' OR '.join(parts)})
-        ORDER BY recipe_id
+
+def _candidate_recipe_ids_by_tag(tags: List[str], limit: int = 200) -> List[int]:
+    """
+    根據 tags（ingredient 或 preview_tag）做 OR 召回，回傳 recipe_id 列表。
+    - 以命中數量排序（命中越多越前面）
+    - 你可以視需要加上 AND 邏輯（例如最低命中2個再納入）
+    """
+    if not tags:
+        return []
+    sql = """
+        SELECT recipe_id, COUNT(*) AS hit
+        FROM public.ingredient
+        WHERE ingredient = ANY(%s) OR preview_tag = ANY(%s)
+        GROUP BY recipe_id
+        ORDER BY hit DESC
         LIMIT %s
     """
-
-    params.append(limit_per_term * max(1, len(expanded_terms)))
-
-    rows = fetch_all(sql, tuple(params))
-    return [r["recipe_id"] for r in rows]
+    rows = fetch_all(sql, (tags, tags, limit))
+    return [int(r["recipe_id"]) for r in rows]
 
 
-### 修改點：取出候選的所有 tag 向量（之後會用「整句向量」去比對）
-def _fetch_tag_embeddings_for_recipes(recipe_ids):
+# =========
+# 重排（預設：標籤重合度；之後可換向量重排/pgvector）
+# =========
+
+
+def _overlap_score(query_tokens: List[str], recipe_tags: Iterable[str]) -> float:
+    """簡易評分：|交集| / sqrt(|Q| * |Doc|)，避免長度偏差。"""
+    q = set(query_tokens)
+    d = set([t for t in recipe_tags if t])
+    if not q or not d:
+        return 0.0
+    inter = len(q & d)
+    denom = math.sqrt(len(q) * len(d))
+    return inter / denom if denom > 0 else 0.0
+
+
+def _fetch_recipe_tags_for(ids: List[int]) -> Dict[int, List[str]]:
     """
-    回傳 [(recipe_id, tag, vege_id, embedding(np.ndarray)), ...]
+    取出每個 recipe 的 preview_tag（或 ingredient）作為重排用的文件特徵。
     """
-    if not recipe_ids:
-        return []
-
+    if not ids:
+        return {}
     sql = """
-        SELECT recipe_id, tag, vege_id, embedding::text AS embedding_text
-        FROM ingredient_vectors
+        SELECT recipe_id, COALESCE(preview_tag, ingredient) AS tag
+        FROM public.ingredient
         WHERE recipe_id = ANY(%s)
     """
-    rows = fetch_all(sql, (recipe_ids,))
-    out = []
+    rows = fetch_all(sql, (ids,))
+    bag: Dict[int, List[str]] = {}
     for r in rows:
-        vec = _parse_pgvector_text(r["embedding_text"])
-        out.append((r["recipe_id"], r["tag"], r["vege_id"], vec))
+        rid = int(r["recipe_id"])
+        bag.setdefault(rid, []).append((r.get("tag") or "").strip())
+    return bag
+
+
+def _rerank_by_overlap(
+    candidate_ids: List[int], query_tokens: List[str], top_k: int
+) -> List[Tuple[int, float]]:
+    """
+    預設重排：以標籤/食材重合度做分數。
+    想切到「向量重排」：只要把這個函式改掉（或呼叫 pgvector 相似度），其他地方不用動。
+    """
+    tag_bag = _fetch_recipe_tags_for(candidate_ids)
+    scored: List[Tuple[int, float]] = []
+    for rid in candidate_ids:
+        tags = tag_bag.get(rid, [])
+        score = _overlap_score(query_tokens, tags)
+        scored.append((rid, float(score)))
+    # 由高到低排序
+    scored.sort(key=lambda x: x[1], reverse=True)
+    return scored[:top_k]
+
+
+# =========
+# 封裝的主流程（給 tool 用）
+# =========
+
+
+def tag_then_vector_rank(
+    user_text: str,
+    tokens_from_jieba: Optional[List[str]] = None,
+    top_k: int = 5,
+    candidate_ids: Optional[List[int]] = None,
+) -> List[Dict[str, Any]]:
+    """
+    1) 展開/清洗 tokens（若沒給就用 pull_ingredients 簡單切）
+    2) OR 召回（ingredient/preview_tag）
+       - 若有 candidate_ids（例如先經過 constraints 過濾），會與召回集取 **交集**
+    3) 重排（預設重合度；未來可換向量重排）
+    4) 回傳前 top_k 的 {id, score, recipe(精簡欄位)}
+    """
+    tokens = tokens_from_jieba or pull_ingredients(user_text, None)
+    if not tokens:
+        # fallback：用簡單分隔符再試一輪
+        rough = [t for t in re.split(r"[ ,，、。]+", user_text) if t]
+        tokens = rough
+
+    # 召回
+    recall_ids = _candidate_recipe_ids_by_tag(tokens, limit=200)
+    if candidate_ids:
+        base = set(int(x) for x in candidate_ids)
+        recall_ids = [rid for rid in recall_ids if rid in base]
+    if not recall_ids:
+        return []
+
+    # 重排（預設重合度）
+    ranked = _rerank_by_overlap(recall_ids, tokens, top_k=top_k)
+    top_ids = [rid for rid, _ in ranked]
+    id2score = dict(ranked)
+
+    # 取精簡欄位
+    lite = fetch_lite(top_ids)
+    out: List[Dict[str, Any]] = []
+    for it in lite:
+        rid = int(it["id"])
+        out.append(
+            {
+                "id": rid,
+                "score": float(id2score.get(rid, 0.0)),
+                "recipe": {
+                    "title": it.get("title", "") or it.get("recipe", ""),
+                    "preview_tags": it.get("preview_tags", []),
+                    "link": it.get("link"),
+                },
+            }
+        )
+    # 依分數再排一次（避免 DB 回傳順序影響）
+    out.sort(key=lambda r: r["score"], reverse=True)
     return out
 
 
-### 修改點：主流程—先 Tag 縮小，再以「整句向量」對候選排序
-def tag_then_vector_rank(
-    user_text: str, tokens_from_jieba, top_k: int = 5  # 你抽到的關鍵詞列表
-):
+# =========
+# 取資料（lite / full）
+# =========
+
+
+def fetch_lite(ids: List[int]) -> List[Dict[str, Any]]:
     """
-    1) 擴充別名，先在 ingredient_vectors 用 tag 做 OR 篩選 -> 候選 recipe_id
-    2) 將 user_text 轉向量
-    3) 取出候選 recipe 的所有 tag 向量，分別與 user_text 向量做 cosine
-       -> 對同一個 recipe 取「最大相似」作為該 recipe 的分數
-    4) 按分數排序取前 top_k，並回傳完整食譜（get_recipe_by_id）
+    取列表顯示需要的欄位：
+    - title（main_recipe.recipe 或 main_recipe.title）
+    - preview_tags（聚合）
+    - link（若有欄位可放）
     """
-    # 1) 擴充 tag
-    expanded = _expand_aliases(tokens_from_jieba)
-    # 如果 jieba 沒抓到，至少用原句裡所有非空白詞作為弱匹配（避免空集合）
-    if not expanded:
-        rough_tokens = [t for t in re.split(r"\s+|,|，|、|。", user_text) if t]
-        expanded = _expand_aliases(rough_tokens)
+    if not ids:
+        return []
+    sql_title = """
+        SELECT id, COALESCE(recipe, title) AS title
+        FROM public.main_recipe
+        WHERE id = ANY(%s)
+    """
+    titles = {int(r["id"]): r["title"] for r in fetch_all(sql_title, (ids,))}
+    # 聚合 preview_tag
+    sql_tags = """
+        SELECT recipe_id, ARRAY_REMOVE(ARRAY_AGG(DISTINCT preview_tag), NULL) AS preview_tags
+        FROM public.ingredient
+        WHERE recipe_id = ANY(%s)
+        GROUP BY recipe_id
+    """
+    tag_rows = fetch_all(sql_tags, (ids,))
+    id2tags = {int(r["recipe_id"]): list(r["preview_tags"] or []) for r in tag_rows}
 
-    # 2) 先用 Tag OR 取候選
-    candidate_ids = _candidate_recipe_ids_by_tag(expanded)
-    if not candidate_ids:
-        return []  # 完全沒命中，就讓外層走你的「全向量備援」或 Google 搜尋
+    # 若有網址欄位可在這裡補，例如 main_recipe.link
+    sql_link = """
+        SELECT id, NULL::text AS link
+        FROM public.main_recipe
+        WHERE id = ANY(%s)
+    """
+    link_rows = fetch_all(sql_link, (ids,))
+    id2link = {int(r["id"]): r.get("link") for r in link_rows}
 
-    # 3) user_text -> 向量
-    q = embed_text_to_np(user_text)
-    q_norm = np.linalg.norm(q) + 1e-12
-
-    # 4) 取候選的 tag 向量；以「recipe_id 最大相似分」做排序分數
-    rows = _fetch_tag_embeddings_for_recipes(candidate_ids)
-
-    best_score_by_id = {}
-    tag_selected_by_id = {}
-    vege_by_id = {}
-
-    for rid, tag, vege_id, vec in rows:
-        if vec.size == 0:
-            continue
-        v_norm = np.linalg.norm(vec) + 1e-12
-        score = float(np.dot(q, vec) / (q_norm * v_norm))  # cosine
-        if (rid not in best_score_by_id) or (score > best_score_by_id[rid]):
-            best_score_by_id[rid] = score
-            tag_selected_by_id[rid] = tag
-            vege_by_id[rid] = vege_id
-
-    # 5) 排序取前 K
-    ranked = sorted(best_score_by_id.items(), key=lambda x: x[1], reverse=True)[:top_k]
-
-    # 6) 補完整食譜內容
-    results = []
-    for rid, score in ranked:
-        recipe = get_recipe_by_id(rid)
-        if not recipe:
-            continue
-        results.append(
+    out = []
+    for rid in ids:
+        out.append(
             {
-                "id": int(rid) if str(rid).isdigit() else rid,
-                "tag": tag_selected_by_id.get(rid),
-                "vege_id": vege_by_id.get(rid),
-                "score": score,
-                "recipe": recipe,
+                "id": int(rid),
+                "title": titles.get(int(rid), ""),
+                "preview_tags": id2tags.get(int(rid), []),
+                "link": id2link.get(int(rid)),
             }
         )
-    return results
+    return out
+
+
+def get_recipe_by_id(
+    recipe_id: int, with_steps: bool = False
+) -> Optional[Dict[str, Any]]:
+    """
+    讀取完整食譜（基本欄位 + 食材 + 可選步驟）
+    """
+    base = fetch_one(
+        """
+        SELECT id, COALESCE(recipe, title) AS title
+        FROM public.main_recipe
+        WHERE id = %s
+        """,
+        (recipe_id,),
+    )
+    if not base:
+        return None
+
+    ings = fetch_all(
+        """
+        SELECT ingredient, preview_tag
+        FROM public.ingredient
+        WHERE recipe_id = %s
+        """,
+        (recipe_id,),
+    )
+
+    steps: Optional[List[Dict[str, Any]]] = None
+    if with_steps:
+        rows = fetch_all(
+            """
+            SELECT step_no, step_desc
+            FROM public.recipe_steps
+            WHERE recipe_id = %s
+            ORDER BY step_no ASC
+            """,
+            (recipe_id,),
+        )
+        steps = [{"no": int(r["step_no"]), "desc": r["step_desc"]} for r in rows]
+
+    return {
+        "id": int(base["id"]),
+        "title": base["title"],
+        "ingredients": [
+            {"ingredient": r.get("ingredient"), "preview_tag": r.get("preview_tag")}
+            for r in ings
+        ],
+        "steps": steps,
+        "link": None,  # 若主表有網址欄位可放上來
+        "preview_tags": list(
+            {(r.get("preview_tag") or "").strip() for r in ings if r.get("preview_tag")}
+        ),
+    }

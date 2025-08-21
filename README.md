@@ -23,6 +23,8 @@ CLI (Agent): python scripts/CLI_run/agent_cli.py
 
 API(調整中  要加入LangChain Agent)
 uvicorn scripts.api.main:app --reload --port 8000
+uvicorn scripts.langchain_project.APIservice.agent_service:app --reload
+
 http://127.0.0.1:8000/docs
 
 
