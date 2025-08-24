@@ -1,4 +1,4 @@
-# scripts/langchain_project/schemas.py
+# scripts/langchain_project/orchestrator_schemas.py
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ class Constraints(BaseModel):
 
 
 class RecipeRouteOut(BaseModel):
-    # ✅ 改 2：sub_intent 同時接受中英文，讓 LLM 回中文不會驗證失敗
+    # 同時接受中英文，避免 LLM 回中文時驗證失敗
     sub_intent: Literal[
         "by_ingredients",
         "by_constraints",
