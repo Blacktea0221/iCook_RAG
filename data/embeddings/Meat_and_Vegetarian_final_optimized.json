@@ -1,46 +1,46 @@
 {
-  "460406": {
+  "479148": {
     "vegetarian": false,
     "uses_pork": true,
-    "reason": "LLM_classified"
+    "reason": "keyword_match_pork"
   },
-  "469696": {
+  "458001": {
     "vegetarian": true,
     "uses_pork": false,
     "reason": "LLM_classified"
   },
-  "470275": {
+  "459396": {
     "vegetarian": true,
     "uses_pork": false,
     "reason": "LLM_classified"
   },
-  "470862": {
+  "467614": {
     "vegetarian": true,
     "uses_pork": false,
     "reason": "LLM_classified"
   },
-  "471465": {
-    "vegetarian": true,
-    "uses_pork": false,
-    "reason": "LLM_classified"
-  },
-  "471659": {
-    "vegetarian": true,
-    "uses_pork": false,
-    "reason": "LLM_classified"
-  },
-  "475926": {
+  "470451": {
     "vegetarian": false,
     "uses_pork": false,
     "reason": "LLM_classified"
   },
-  "478697": {
+  "472762": {
     "vegetarian": true,
     "uses_pork": false,
     "reason": "LLM_classified"
   },
-  "479016": {
+  "473604": {
+    "vegetarian": false,
+    "uses_pork": false,
+    "reason": "LLM_classified"
+  },
+  "478763": {
     "vegetarian": true,
+    "uses_pork": false,
+    "reason": "LLM_classified"
+  },
+  "479531": {
+    "vegetarian": false,
     "uses_pork": false,
     "reason": "LLM_classified"
   }

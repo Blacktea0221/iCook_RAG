@@ -1,0 +1,47 @@
+{
+  "458001": {
+    "vegetarian": false,
+    "uses_pork": false,
+    "reason": "keyword_match_all"
+  },
+  "472762": {
+    "vegetarian": false,
+    "uses_pork": false,
+    "reason": "keyword_match_all"
+  },
+  "473604": {
+    "vegetarian": false,
+    "uses_pork": false,
+    "reason": "keyword_match_all"
+  },
+  "478763": {
+    "vegetarian": false,
+    "uses_pork": false,
+    "reason": "keyword_match_all"
+  },
+  "479148": {
+    "vegetarian": false,
+    "uses_pork": true,
+    "reason": "keyword_match_all"
+  },
+  "479531": {
+    "vegetarian": false,
+    "uses_pork": false,
+    "reason": "keyword_match_all"
+  },
+  "459396": {
+    "vegetarian": true,
+    "uses_pork": false,
+    "reason": "LLM_classified"
+  },
+  "467614": {
+    "vegetarian": true,
+    "uses_pork": false,
+    "reason": "LLM_classified"
+  },
+  "470451": {
+    "vegetarian": false,
+    "uses_pork": false,
+    "reason": "LLM_classified"
+  }
+}
