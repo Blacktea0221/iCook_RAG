@@ -340,7 +340,13 @@ def process_recipes(input_file, output_file, mode="test", limit=50, offset=0):
 # --- 程式入口點 ---
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    input_json_path = os.path.join(BASE_DIR, "ingredient_list.json")
+
+    # 修正後: 確保回到專案根目錄，再進入正確路徑
+    project_root_dir = os.path.dirname(os.path.dirname(BASE_DIR))
+    input_json_path = os.path.join(
+        project_root_dir, "data", "embeddings", "ingredient_list.json"
+    )
+
     output_json_path = os.path.join(
         BASE_DIR, "processed_recipes_test.json"
     )  # 測試模式的輸出檔名
@@ -348,7 +354,7 @@ if __name__ == "__main__":
     # === 測試模式 ===
     # 這裡的設定與您提供的 DB 語法一致，抓取第 1500 筆後的 50 筆資料
     process_recipes(
-        input_json_path, output_json_path, mode="test", limit=50, offset=1500
+        input_json_path, output_json_path, mode="test", limit=50, offset=100
     )
 
     # === 正式模式（註解掉以避免誤觸） ===
