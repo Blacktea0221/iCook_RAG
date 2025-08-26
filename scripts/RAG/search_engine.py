@@ -138,9 +138,6 @@ def _overlap_score(query_tokens: List[str], recipe_tags: Iterable[str]) -> float
 
 
 def _fetch_recipe_tags_for(ids: List[int]) -> Dict[int, List[str]]:
-    """
-    取出每個 recipe 的 preview_tag（或 ingredient）作為重排用的文件特徵。
-    """
     if not ids:
         return {}
     sql = """
@@ -152,7 +149,12 @@ def _fetch_recipe_tags_for(ids: List[int]) -> Dict[int, List[str]]:
     bag: Dict[int, List[str]] = {}
     for r in rows:
         rid = int(r["recipe_id"])
-        bag.setdefault(rid, []).append((r.get("tag") or "").strip())
+        raw = (r.get("tag") or "").strip()
+        # 原字串也保留
+        parts = [raw] if raw else []
+        # 額外：用常見分隔符切成單詞一併加入
+        parts += [t.strip() for t in re.split(r"[ ,，、/|｜]+", raw) if t.strip()]
+        bag.setdefault(rid, []).extend(parts)
     return bag
 
 

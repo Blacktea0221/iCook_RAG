@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Optional, Literal
 
 from pydantic import BaseModel, Field
 
@@ -12,29 +12,27 @@ class IntentOut(BaseModel):
     intent: Literal["recipe", "nutrition", "price", "seasonal", "other"]
 
 
-# --- 第二層（只在 intent=recipe 時使用）---
-class Constraints(BaseModel):
-    diet: Optional[str] = None
+class ConstraintsSchema(BaseModel):
+    """與 constraints_filter_tool 對齊的限制條件"""
+    # 註：tool 目前接受的說明文字為 "vegetarian/omnivore/None"
+    # 這裡用 Optional[str] 包起來，None / "none" 都視為無限制
+    diet: Optional[str] = Field(default=None, description="vegetarian / omnivore / none")
     no_pork: bool = False
-    no_beef: bool = False
-    no_seafood: bool = False
-    extra_exclude: List[str] = []
+    extra_exclude: List[str] = Field(default_factory=list)
 
 
 class RecipeRouteOut(BaseModel):
-    # 同時接受中英文，避免 LLM 回中文時驗證失敗
-    sub_intent: Literal[
-        "by_ingredients",
-        "by_constraints",
-        "by_name",
-        "食譜查詢",
-        "特殊需求",
-        "食譜名稱",
-    ] = "by_ingredients"
+    """
+    Sub-router 的結構化輸出：
+    - by_ingredients：一般關鍵字/食材查詢
+    - by_constraints：先過濾（diet/no_pork/關鍵字排除），之後再檢索
+    - by_name：名稱/關鍵字直接全文檢索
+    """
+    sub_intent: Literal["by_ingredients", "by_constraints", "by_name"]
+    constraints: Optional[ConstraintsSchema] = None
     name_query: Optional[str] = None
-    ingredients: List[str] = []
-    constraints: Constraints = Constraints()
-    reason: str = ""
+    # 預留這欄位，未來如果真的要把解析後的食材清單往下傳也能用
+    ingredients: List[str] = Field(default_factory=list)
 
 
 # --- Presenter 輸出（回給 LINE Bot/前端）---
