@@ -1,4 +1,7 @@
+import re
+
 import jieba
+
 from scripts.RAG.search_engine import fetch_all
 
 
@@ -18,6 +21,10 @@ def build_ingredient_set_from_db() -> set:
             words.add(ing)
         if tag:
             words.add(tag)
+            for t in re.split(r"[ ,，、/|｜\+和]+", tag):
+                t = t.strip()
+                if t:
+                    words.add(t)
     # 讓 jieba 能切出你資料庫裡的詞
     for w in words:
         if w:

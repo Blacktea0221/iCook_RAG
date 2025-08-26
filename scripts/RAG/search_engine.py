@@ -14,6 +14,7 @@ from __future__ import annotations
 import math
 import os
 import re
+from itertools import chain
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import psycopg2
@@ -73,22 +74,18 @@ def fetch_one(
 
 
 def pull_ingredients(user_text: str, ingredient_set: Optional[set] = None) -> List[str]:
-    """
-    使用者句子 → 食材 tokens
-    - 若提供 ingredient_set，會以「在字典中」做濾除，降低雜訊。
-    - 你已在 ingredient_utils 中把資料庫的食材灌進 jieba 字典。
-    """
     try:
-        import jieba  # 本地斷詞
+        import jieba
     except Exception:
         return []
+    import re
 
+    user_text = re.sub(r"[+|｜/和]", " ", user_text)  # 先把連接符變空白
     tokens = [t.strip() for t in jieba.lcut(user_text) if t.strip()]
     if ingredient_set:
         tokens = [t for t in tokens if t in ingredient_set]
-    # 去重、保序
-    seen = set()
-    uniq = []
+    # 去重保序
+    seen, uniq = set(), []
     for t in tokens:
         if t not in seen:
             seen.add(t)
@@ -102,22 +99,24 @@ def pull_ingredients(user_text: str, ingredient_set: Optional[set] = None) -> Li
 
 
 def _candidate_recipe_ids_by_tag(tags: List[str], limit: int = 200) -> List[int]:
-    """
-    根據 tags（ingredient 或 preview_tag）做 OR 召回，回傳 recipe_id 列表。
-    - 以命中數量排序（命中越多越前面）
-    - 你可以視需要加上 AND 邏輯（例如最低命中2個再納入）
-    """
     if not tags:
         return []
     sql = """
-        SELECT recipe_id, COUNT(*) AS hit
-        FROM public.ingredient
-        WHERE ingredient = ANY(%s) OR preview_tag = ANY(%s)
-        GROUP BY recipe_id
+        WITH q AS (
+          SELECT UNNEST(%s::text[]) AS token
+        )
+        SELECT i.recipe_id, COUNT(*) AS hit
+        FROM public.ingredient AS i
+        JOIN q ON
+             TRIM(i.ingredient) = q.token
+          OR TRIM(i.preview_tag) = q.token
+          OR i.ingredient ILIKE ('%' || q.token || '%')
+          OR i.preview_tag ILIKE ('%' || q.token || '%')
+        GROUP BY i.recipe_id
         ORDER BY hit DESC
         LIMIT %s
     """
-    rows = fetch_all(sql, (tags, tags, limit))
+    rows = fetch_all(sql, (tags, limit))
     return [int(r["recipe_id"]) for r in rows]
 
 
@@ -150,10 +149,13 @@ def _fetch_recipe_tags_for(ids: List[int]) -> Dict[int, List[str]]:
     for r in rows:
         rid = int(r["recipe_id"])
         raw = (r.get("tag") or "").strip()
-        # 原字串也保留
-        parts = [raw] if raw else []
-        # 額外：用常見分隔符切成單詞一併加入
-        parts += [t.strip() for t in re.split(r"[ ,，、/|｜]+", raw) if t.strip()]
+        parts = []
+        if raw:
+            parts.append(raw)  # 保留原字串
+            # 使用常見分隔符把合併詞拆成單字（含 + 與「和」）
+            parts.extend(
+                [t.strip() for t in re.split(r"[ ,，、/|｜\+和]+", raw) if t.strip()]
+            )
         bag.setdefault(rid, []).extend(parts)
     return bag
 
@@ -187,34 +189,33 @@ def tag_then_vector_rank(
     top_k: int = 5,
     candidate_ids: Optional[List[int]] = None,
 ) -> List[Dict[str, Any]]:
-    """
-    1) 展開/清洗 tokens（若沒給就用 pull_ingredients 簡單切）
-    2) OR 召回（ingredient/preview_tag）
-       - 若有 candidate_ids（例如先經過 constraints 過濾），會與召回集取 **交集**
-    3) 重排（預設重合度；未來可換向量重排）
-    4) 回傳前 top_k 的 {id, score, recipe(精簡欄位)}
-    """
+    # 1) tokens
     tokens = tokens_from_jieba or pull_ingredients(user_text, None)
     if not tokens:
-        # fallback：用簡單分隔符再試一輪
         rough = [t for t in re.split(r"[ ,，、。]+", user_text) if t]
         tokens = rough
+    # 去重保序
+    seen = set()
+    tokens = [t for t in tokens if not (t in seen or seen.add(t))]
 
-    # 召回
-    recall_ids = _candidate_recipe_ids_by_tag(tokens, limit=200)
+    # 2) 召回（已改 TRIM+ILIKE 的 _candidate_recipe_ids_by_tag）
+    recall_ids = _candidate_recipe_ids_by_tag(tokens, limit=max(200, top_k * 40))
+    print("[DEBUG] tokens:", tokens)
+    print("[DEBUG] recall_size:", len(recall_ids), "sample:", recall_ids[:10])
+
     if candidate_ids:
         base = set(int(x) for x in candidate_ids)
         recall_ids = [rid for rid in recall_ids if rid in base]
     if not recall_ids:
         return []
 
-    # 重排（預設重合度）
+    # 3) 重排（overlap；_fetch_recipe_tags_for 也要拆 tag）
     ranked = _rerank_by_overlap(recall_ids, tokens, top_k=top_k)
     top_ids = [rid for rid, _ in ranked]
     id2score = dict(ranked)
 
-    # 取精簡欄位
-    lite = fetch_lite(top_ids)
+    # 4) 取精簡欄位
+    lite = fetch_lite(top_ids)  # 這裡如果回傳數量少，通常是 main_recipe 對不到
     out: List[Dict[str, Any]] = []
     for it in lite:
         rid = int(it["id"])
@@ -229,7 +230,6 @@ def tag_then_vector_rank(
                 },
             }
         )
-    # 依分數再排一次（避免 DB 回傳順序影響）
     out.sort(key=lambda r: r["score"], reverse=True)
     return out
 
