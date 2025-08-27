@@ -147,7 +147,6 @@ def node_presenter(state: GraphState) -> GraphState:
             "title": r.get("title", ""),
             "preview_tags": r.get("preview_tags", []),
             "score": float(r.get("score", 0.0)),
-            "link": r.get("link"),
         }
         for r in (state.get("results") or [])[: max(1, state.get("top_k", 5))]
     ]

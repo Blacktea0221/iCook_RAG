@@ -79,8 +79,9 @@ def pull_ingredients(user_text: str, ingredient_set: Optional[set] = None) -> Li
     except Exception:
         return []
     import re
-
-    user_text = re.sub(r"[+|｜/和]", " ", user_text)  # 先把連接符變空白
+    
+    # 正規化常見連接符號：+、｜、/、和 → 空白，避免被當成一個詞
+    user_text = re.sub(r"[+|｜/和]", " ", user_text) # 先把連接符變空白
     tokens = [t.strip() for t in jieba.lcut(user_text) if t.strip()]
     if ingredient_set:
         tokens = [t for t in tokens if t in ingredient_set]
@@ -102,20 +103,20 @@ def _candidate_recipe_ids_by_tag(tags: List[str], limit: int = 200) -> List[int]
     if not tags:
         return []
     sql = """
-        WITH q AS (
-          SELECT UNNEST(%s::text[]) AS token
-        )
-        SELECT i.recipe_id, COUNT(*) AS hit
-        FROM public.ingredient AS i
-        JOIN q ON
-             TRIM(i.ingredient) = q.token
-          OR TRIM(i.preview_tag) = q.token
-          OR i.ingredient ILIKE ('%' || q.token || '%')
-          OR i.preview_tag ILIKE ('%' || q.token || '%')
-        GROUP BY i.recipe_id
-        ORDER BY hit DESC
-        LIMIT %s
-    """
+            WITH q AS (
+            SELECT UNNEST(%s::text[]) AS token
+            )
+            SELECT i.recipe_id, COUNT(*) AS hit
+            FROM public.ingredient AS i
+            JOIN q ON
+                TRIM(i.ingredient) = q.token
+            OR TRIM(i.preview_tag) = q.token
+            OR i.ingredient ILIKE CONCAT('%%', q.token, '%%')
+            OR i.preview_tag ILIKE CONCAT('%%', q.token, '%%')
+            GROUP BY i.recipe_id
+            ORDER BY hit DESC
+            LIMIT %s
+        """
     rows = fetch_all(sql, (tags, limit))
     return [int(r["recipe_id"]) for r in rows]
 
@@ -142,7 +143,7 @@ def _fetch_recipe_tags_for(ids: List[int]) -> Dict[int, List[str]]:
     sql = """
         SELECT recipe_id, COALESCE(preview_tag, ingredient) AS tag
         FROM public.ingredient
-        WHERE recipe_id = ANY(%s)
+        WHERE recipe_id::int = ANY(%s::int[])
     """
     rows = fetch_all(sql, (ids,))
     bag: Dict[int, List[str]] = {}
@@ -226,7 +227,6 @@ def tag_then_vector_rank(
                 "recipe": {
                     "title": it.get("title", "") or it.get("recipe", ""),
                     "preview_tags": it.get("preview_tags", []),
-                    "link": it.get("link"),
                 },
             }
         )
@@ -249,29 +249,20 @@ def fetch_lite(ids: List[int]) -> List[Dict[str, Any]]:
     if not ids:
         return []
     sql_title = """
-        SELECT id, COALESCE(recipe, title) AS title
+        SELECT id, recipe AS title
         FROM public.main_recipe
-        WHERE id = ANY(%s)
+        WHERE id::int = ANY(%s::int[])
     """
     titles = {int(r["id"]): r["title"] for r in fetch_all(sql_title, (ids,))}
     # 聚合 preview_tag
     sql_tags = """
         SELECT recipe_id, ARRAY_REMOVE(ARRAY_AGG(DISTINCT preview_tag), NULL) AS preview_tags
         FROM public.ingredient
-        WHERE recipe_id = ANY(%s)
+        WHERE recipe_id::int = ANY(%s::int[])
         GROUP BY recipe_id
     """
     tag_rows = fetch_all(sql_tags, (ids,))
     id2tags = {int(r["recipe_id"]): list(r["preview_tags"] or []) for r in tag_rows}
-
-    # 若有網址欄位可在這裡補，例如 main_recipe.link
-    sql_link = """
-        SELECT id, NULL::text AS link
-        FROM public.main_recipe
-        WHERE id = ANY(%s)
-    """
-    link_rows = fetch_all(sql_link, (ids,))
-    id2link = {int(r["id"]): r.get("link") for r in link_rows}
 
     out = []
     for rid in ids:
@@ -280,7 +271,6 @@ def fetch_lite(ids: List[int]) -> List[Dict[str, Any]]:
                 "id": int(rid),
                 "title": titles.get(int(rid), ""),
                 "preview_tags": id2tags.get(int(rid), []),
-                "link": id2link.get(int(rid)),
             }
         )
     return out
@@ -294,9 +284,9 @@ def get_recipe_by_id(
     """
     base = fetch_one(
         """
-        SELECT id, COALESCE(recipe, title) AS title
+        SELECT id, recipe AS title
         FROM public.main_recipe
-        WHERE id = %s
+        WHERE id::int = %s::int
         """,
         (recipe_id,),
     )
@@ -307,7 +297,7 @@ def get_recipe_by_id(
         """
         SELECT ingredient, preview_tag
         FROM public.ingredient
-        WHERE recipe_id = %s
+        WHERE recipe_id::int = %s::int
         """,
         (recipe_id,),
     )

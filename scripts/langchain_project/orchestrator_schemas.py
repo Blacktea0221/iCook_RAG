@@ -40,7 +40,6 @@ class PresentItem(BaseModel):
     id: int
     title: str
     score: float
-    link: Optional[str] = None
 
 
 class PresentOut(BaseModel):
