@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any, Dict, List, TypedDict
 
@@ -46,38 +47,257 @@ class GraphState(TypedDict, total=False):
     error: str
 
 
+def _has_month_or_season_trigger(text: str) -> bool:
+    t = (text or "").lower()
+    # 1~12 月（阿拉伯數字）
+    if re.search(r"(^|\s)([1-9]|1[0-2])\s*月", t):
+        return True
+    # 中文數字月份 & 常見語彙
+    month_words = [
+        "一月",
+        "二月",
+        "三月",
+        "四月",
+        "五月",
+        "六月",
+        "七月",
+        "八月",
+        "九月",
+        "十月",
+        "十一月",
+        "十二月",
+        "本月",
+        "這個月",
+        "下月",
+        "上月",
+        "春天",
+        "夏天",
+        "秋天",
+        "冬天",
+        "春季",
+        "夏季",
+        "秋季",
+        "冬季",
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "第一季",
+        "第二季",
+        "第三季",
+        "第四季",
+        "產季",
+        "當季",
+        "盛產",
+        "季節",
+        "時令",
+        "上市",
+        "上市時間",
+        "幾月",
+        "月份",
+        "何時",
+    ]
+    return any(w in t for w in month_words)
+
+
+def _has_nutrition_trigger(text: str) -> bool:
+    t = (text or "").lower()
+    keys = [
+        "熱量",
+        "卡路里",
+        "kcal",
+        "蛋白質",
+        "protein",
+        "脂肪",
+        "碳水",
+        "膳食纖維",
+        "維他命",
+        "維生素",
+        "鈣",
+        "鐵",
+        "鋅",
+        "鎂",
+        "鉀",
+        "鈉",
+        "磷",
+        "硒",
+        "葉酸",
+        "水分",
+        "含水量",
+        "含水率",
+        "moisture",
+    ]
+    return any(w in t for w in keys)
+
+
+def _has_price_trigger(text: str) -> bool:
+    t = (text or "").lower()
+    keys = [
+        "價格",
+        "價錢",
+        "多少錢",
+        "幾元",
+        "幾塊",
+        "nt",
+        "元",
+        "比價",
+        "行情",
+        "行情報價",
+        "一斤多少",
+        "一公斤多少",
+        "菜價",
+        "漲價",
+        "上漲",
+        "下跌",
+        "降價",
+        "調漲",
+        "調降",
+        "便宜",
+        "貴",
+    ]
+    return any(k in t for k in keys)
+
+
+def _has_constraint_trigger(text: str) -> bool:
+    t = (text or "").lower()
+    return any(
+        k in t
+        for k in [
+            "素食",
+            "蔬食",
+            "純素",
+            "全素",
+            "蛋奶素",
+            "vegan",
+            "vegetarian",
+            "不吃豬",
+            "不要豬",
+            "無豬",
+            "不含豬",
+            "禁豬",
+            "no pork",
+            "清真",
+            "halal",
+            "不要培根",
+            "不吃培根",
+        ]
+    )
+
+
+def _looks_like_dish_name(text: str) -> bool:
+    t = (text or "").lower().strip()
+    # 常見料理/食品後綴（中/英文）
+    pat = r"(炒|湯|煎|炸|烤|拌|燉|羹|飯|麵|粥|餅|餃|捲|沙拉|醬|果醬|滷|燜|焗|涼拌|醃)$"
+    if re.search(pat, t):
+        return True
+    eng = [
+        "sauce",
+        "jam",
+        "soup",
+        "salad",
+        "noodles",
+        "rice",
+        "stew",
+        "stir-fry",
+        "stir fry",
+    ]
+    return any(w in t for w in eng)
+
+
 def node_router(state: GraphState) -> GraphState:
     text = state["text"]
     llm = get_chat_model("router")
-    messages = [
-        SystemMessage(content=ROUTER_PROMPT),
-        HumanMessage(content=text),
-    ]
-    out = llm.invoke(messages).content
+    messages = [SystemMessage(content=ROUTER_PROMPT), HumanMessage(content=text)]
+    try:
+        out = llm.invoke(messages).content
+    except Exception:
+        # LLM 失敗時：優先級 nutrition > price > seasonal > recipe > other
+        if _has_nutrition_trigger(text):
+            return {"intent": "nutrition"}
+        if _has_price_trigger(text):
+            return {"intent": "price"}
+        if _has_month_or_season_trigger(text):
+            return {"intent": "seasonal"}
+        if _has_constraint_trigger(text) or _looks_like_dish_name(text):
+            return {"intent": "recipe"}
+        return {"intent": "other"}
+
     intent = "other"
     try:
         intent = IntentOut.model_validate_json(out).intent
     except Exception:
         intent = "other"
+
+    # ---- 覆寫保底（固定優先序）----
+    # 1) 有營養/價格觸發：一定分到 nutrition / price
+    if _has_nutrition_trigger(text):
+        intent = "nutrition"
+    elif _has_price_trigger(text):
+        intent = "price"
+    # 2) 有月份/季節觸發：一定分到 seasonal
+    elif _has_month_or_season_trigger(text):
+        intent = "seasonal"
+    # 3) 有飲食限制（素食/不吃豬…）或看起來像一道料理/醬料名：分到 recipe
+    elif _has_constraint_trigger(text) or _looks_like_dish_name(text):
+        intent = "recipe"
+
     return {"intent": intent}
+
+
+def _detect_constraints_from_text(text: str) -> dict:
+    t = (text or "").lower()
+    diet = None
+    # 素食相關（可再擴充）
+    if any(
+        k in t
+        for k in ["素食", "蔬食", "純素", "全素", "vegan", "vegetarian", "蛋奶素"]
+    ):
+        diet = "vegetarian"
+    # 禁豬/清真
+    no_pork = any(
+        k in t
+        for k in [
+            "不吃豬",
+            "不要豬",
+            "無豬",
+            "不含豬",
+            "禁豬",
+            "no pork",
+            "清真",
+            "halal",
+            "不要培根",
+            "不吃培根",
+        ]
+    )
+    return {"diet": diet, "no_pork": no_pork}
 
 
 def node_sub_router(state: GraphState) -> GraphState:
     if state.get("intent") != "recipe":
         return {}
+
+    import json
+
     text = state["text"]
     llm = get_chat_model("sub_router")
-    messages = [
-        SystemMessage(content=SUB_ROUTER_PROMPT),
-        HumanMessage(content=text),
-    ]
+    messages = [SystemMessage(content=SUB_ROUTER_PROMPT), HumanMessage(content=text)]
     raw = llm.invoke(messages).content
     try:
-        import json
-
         sub = json.loads(raw)
     except Exception:
-        sub = {"sub_intent": "食譜查詢", "ingredients": [], "constraints": {}}
+        sub = {"sub_intent": "食材查詢", "ingredients": [], "constraints": {}}
+
+    # ⛳ 強制覆寫：只要句子含有素食/禁豬等訊號 → 一律切到「特殊需求」，並補上 constraints
+    auto = _detect_constraints_from_text(text)
+    if auto.get("diet") or auto.get("no_pork"):
+        sub["sub_intent"] = "特殊需求"
+        cons = sub.get("constraints") or {}
+        if auto.get("diet") and not cons.get("diet"):
+            cons["diet"] = auto["diet"]
+        if auto.get("no_pork") and not cons.get("no_pork"):
+            cons["no_pork"] = True
+        sub["constraints"] = cons
+
     return {"subroute": sub}
 
 
@@ -85,61 +305,150 @@ def node_constraints(state: GraphState) -> GraphState:
     sub = state.get("subroute") or {}
     if not sub or sub.get("sub_intent") != "特殊需求":
         return {}
-    tool = ConstraintsFilterTool()
+
     cons = sub.get("constraints") or {}
+    tool = ConstraintsFilterTool()
+
+    # 第一次：依使用者限制（可能有 diet=vegetarian 與/或 no_pork）
     try:
         out = tool.run(
             {
                 "base_ids": [],
                 "diet": cons.get("diet"),
                 "no_pork": bool(cons.get("no_pork")),
-                "keywords_exclude": [],
+                "extra_exclude": [],  # ← 修正欄位名（原本誤寫 keywords_exclude）
+                "top_k": 500,
             }
         )
     except Exception:
         out = {"ids": [], "reason": "", "error": "constraints tool error"}
-    ids = out.get("ids") or []
-    return {"candidate_ids": ids}
+
+    ids = list(out.get("ids") or [])
+
+    # 若要求素食卻無結果、且有 no_pork，退一步：只禁豬
+    if not ids and cons.get("no_pork"):
+        try:
+            out2 = tool.run(
+                {
+                    "base_ids": [],
+                    "diet": None,  # 放寬素食標記
+                    "no_pork": True,
+                    "extra_exclude": [],
+                    "top_k": 500,
+                }
+            )
+            ids = list(out2.get("ids") or [])
+        except Exception:
+            pass
+
+    return {"candidate_ids": ids, "constraints": cons}
 
 
 def node_search(state: GraphState) -> GraphState:
     sub = state.get("subroute") or {}
+    cons = state.get("constraints") or {}
     k = max(1, min(int(state.get("top_k", 5)), 20))
 
     def _unwrap(res):
-        # 工具可能回 dict 或 list；我們只要列表
         if isinstance(res, dict):
             return res.get("results") or []
         return res or []
 
-    # 1) 食譜名稱：全文檢索（注意參數是 query_text）
+    def _passes_constraints(item: Dict[str, Any]) -> bool:
+        title = (item.get("title") or "").lower()
+        tags = [str(t).lower() for t in (item.get("preview_tags") or [])]
+
+        banned_meats = {
+            "培根",
+            "豬",
+            "豬肉",
+            "五花肉",
+            "火腿",
+            "肉燥",
+            "香腸",
+            "絞肉",
+            "牛",
+            "牛肉",
+            "羊",
+            "雞",
+            "雞肉",
+            "鴨",
+            "鵝",
+            "魚",
+            "鮭",
+            "鯖",
+            "鮪",
+            "蝦",
+            "蟹",
+            "花枝",
+            "章魚",
+            "蛤蜊",
+            "牡蠣",
+        }
+        if cons.get("no_pork"):
+            if any(w in title for w in ["培根", "豬", "豬肉", "五花肉", "火腿"]) or any(
+                any(w in t for w in ["培根", "豬", "豬肉", "五花肉", "火腿"])
+                for t in tags
+            ):
+                return False
+        if cons.get("diet") == "vegetarian":
+            if any(w in title for w in banned_meats) or any(
+                any(w in t for w in banned_meats) for t in tags
+            ):
+                return False
+        return True
+
+    # 1) 食譜名稱：全文檢索（同樣可吃候選集）
     if sub.get("sub_intent") == "食譜名稱":
         name_q = (sub.get("name_query") or "").strip()
         if not name_q:
             return {"results": []}
         tool = RecipeRetrieverTool()
-        res = tool.run({"query_text": name_q, "top_k": k, "candidate_ids": []})
-        return {"results": _unwrap(res)}
+        res = tool.run(
+            {
+                "query_text": name_q,
+                "top_k": k,
+                "candidate_ids": state.get("candidate_ids") or [],
+            }
+        )
+        items = _unwrap(res)
+        if cons:
+            items = [it for it in items if _passes_constraints(it)]
+        return {"results": items}
 
-    # 2) 特殊需求：先過濾，再查詢（即使 candidate_ids 空也要帶參數）
+    # 2) 特殊需求：優先在候選集合內召回；若空，降級一般召回+內容過濾
     if sub.get("sub_intent") == "特殊需求":
         tool = RecipeSearchTool()
-        res = tool.run(
+        first = tool.run(
             {
                 "user_text": state["text"],
                 "top_k": k,
                 "candidate_ids": state.get("candidate_ids") or [],
             }
         )
-        return {"results": _unwrap(res)}
+        items = _unwrap(first)
 
-    # 3) 食材查詢（預設）：一定帶 candidate_ids=[]
+        if not items:
+            general = tool.run(
+                {
+                    "user_text": state["text"],
+                    "top_k": max(k * 2, 10),  # 多抓一些，過濾後再截 k
+                    "candidate_ids": [],
+                }
+            )
+            items = _unwrap(general)
+
+        if cons:
+            items = [it for it in items if _passes_constraints(it)]
+        return {"results": items[:k]}
+
+    # 3) 食材查詢（預設）：也吃 candidate_ids（若先前有產生）
     tool = RecipeSearchTool()
     res = tool.run(
         {
             "user_text": state["text"],
             "top_k": k,
-            "candidate_ids": [],
+            "candidate_ids": state.get("candidate_ids") or [],
         }
     )
     return {"results": _unwrap(res)}
