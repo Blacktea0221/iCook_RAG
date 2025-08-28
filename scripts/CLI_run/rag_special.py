@@ -1,153 +1,270 @@
-import sys, os
+import sys
+import os
 import json
 import random
 import jieba
-from dotenv import load_dotenv
-
-# 專案路徑加入 Python 模組搜尋
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
-# === Google 搜尋（備援，暫關） ===
-from googlesearch import search as google_search  # pip install googlesearch-python
-
-# === LLM 與資料庫工具 ===
-from scripts.RAG.llm_utils import call_ollama_llm, summarize_search_results
-from scripts.database.ingredient_utils import build_ingredient_set_from_db
-from scripts.RAG.search_engine import get_recipe_by_id, pull_ingredients, tag_then_vector_rank
-
-load_dotenv()
-
-# === 設定檔案路徑 ===
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-classify_map_path = os.path.join(project_root, "data", "embeddings", "Meat and Vegetarian.json")
-
-with open(classify_map_path, "r", encoding="utf-8") as f:
-    CLASSIFY_MAP = json.load(f)
-
-CLASS_DICT = {"素食", "葷食"}
-CLASS_MAPPING = {"素食": "vegetarian", "葷食": "non_vegetarian"}
+from typing import List, Dict, Any, Set
 
 
-# === Google 搜尋食譜備援函式 ===
-def google_search_recipes(keyword: str, k: int = 5):
-    query = f"{keyword} 食譜"
-    results = []
-    for item in google_search(query, advanced=True, num_results=k, lang="zh-tw"):
-        results.append({"title": item.title, "link": item.url, "snippet": item.description})
-    return results
+# 取得目前檔案的絕對路徑
+current_file_path = os.path.abspath(__file__)
+# 取得專案根目錄路徑
+project_root_path = os.path.abspath(
+    os.path.join(os.path.dirname(current_file_path), "../..")
+)
+# 將專案根目錄加入 Python 模組搜尋路徑
+sys.path.insert(0, project_root_path)
 
 
-# === CLI 顯示食譜函式 ===
-def pretty_print(item: dict):
-    rec = item["recipe"]
-    print(f"=== 查詢結果：Recipe ID {item['id']} (相似度 {item.get('score', 1.0):.4f}) ===\n")
-    print(f"食譜名稱：{rec.get('recipe','')}\n")
-
-    if rec.get("preview_tags"):
-        print("── 預覽 Tags ──")
-        print("、".join(rec["preview_tags"]))
-        print()
-
-    print("── 食材 Ingredients ──")
-    for idx, ing in enumerate(rec.get("ingredients", []), 1):
-        print(f"{idx}. {ing.get('ingredient','')}")
-
-    print("\n── 步驟 Steps ──")
-    for step in rec.get("steps", []):
-        print(f"{step.get('step_no','')}. {step.get('description','')}")
-    print()
+# 從其他模組中匯入所需的函式
+from scripts.RAG.llm_utils import call_openai_llm
+from scripts.RAG.search_engine import (
+    get_recipe_by_id,
+    tag_then_vector_rank,
+    pull_ingredients,
+    fetch_all,
+)
 
 
-# === 主程式 ===
-def main():
-    print("RAG 智能推薦查詢（輸入任何中文描述；exit 離開）")
+# 定義分類標籤和其對應的關鍵字
+DIET_KEYWORDS = {
+    "素食": "vegetarian",
+    "葷食": "non_vegetarian",
+    "不吃豬肉": "uses_pork",
+    "無豬": "uses_pork",
+    "穆斯林": "uses_pork",
+}
 
-    # 初始化食材集合
+
+# 新增：定義豬肉製品相關的關鍵字集合
+PORK_PRODUCTS = {
+    "豬肉",
+    "豬油",
+    "培根",
+    "火腿",
+    "香腸",
+    "豬腳",
+    "豬尾巴",
+    "豬耳朵",
+    "豬腸",
+    "豬排",
+    "豬里脊",
+    "豬腿肉",
+    "豬腰",
+    "豬肝",
+    "豬心",
+    "豬肋排",
+    "豬五花",
+    "豬絞肉",
+    "豬排骨",
+    "豬油",
+    "貢丸",
+}
+
+# 修正：確保 ingredient_set 被正確定義
+ingredient_set = {
+    "番茄",
+    "雞蛋",
+    "豬肉",
+    "牛肉",
+    "蔥",
+    "豆腐",
+    "花椒",
+    "醬油",
+    "蒜苗",
+    "豬油",
+    "韭菜",
+    "培根",
+    "火腿",
+    "香腸",
+    "豬腳",
+}
+
+
+# === 資料載入函式 ===
+def _load_dietary_groups_from_db() -> Dict[str, Dict[str, bool]]:
+    """
+    從資料庫的 dietary_groups 表格中載入飲食群組資料。
+    """
+    print("正在從資料庫載入 dietary_groups...")
     try:
-        ingredient_set = build_ingredient_set_from_db()
+        sql = "SELECT recipe_id, vegetarian, uses_pork FROM dietary_groups;"
+        rows = fetch_all(sql)
+        # 轉換資料格式
+        classify_map = {}
+        for r in rows:
+            classify_map[str(r["recipe_id"])] = {
+                "vegetarian": r["vegetarian"],
+                "uses_pork": r["uses_pork"],
+            }
+        print(f"成功載入 {len(classify_map)} 筆食譜的飲食群組資料。")
+        return classify_map
     except Exception as e:
-        print("[FATAL] 初始化食材字典失敗：", repr(e))
-        return
+        print(f"❌ 從資料庫載入 dietary_groups 失敗: {e}")
+        return {}
 
-    while True:
-        raw_input_text = input("\n請描述你有的食材或需求: ").strip()
-        if raw_input_text.lower() in ("exit", "quit"):
-            print("離開程式")
-            break
 
-        # === 特殊飲食條件判斷 ===
-        classes = [t for t in CLASS_DICT if t in raw_input_text]
-        hates_pork = ("不吃豬肉" in raw_input_text) or ("無豬" in raw_input_text)
+# 在模組載入時，將資料庫資料載入到一個全域變數中，只執行一次
+CLASSIFY_MAP = _load_dietary_groups_from_db()
 
-        # 先從 CLASSIFY_MAP 過濾符合飲食條件的食譜 ID
-        allowed_ids = None
-        if classes:
-            diet_key = CLASS_MAPPING[classes[0]]  # vegetarian / non_vegetarian
-            allowed_ids = [
-                int(rid) for rid, info in CLASSIFY_MAP.items() if info.get(diet_key, False)
-            ]
 
-        if hates_pork and allowed_ids:
-            allowed_ids = [
-                rid for rid in allowed_ids if not CLASSIFY_MAP.get(str(rid), {}).get("uses_pork", False)
-            ]
+# === 核心功能：3-2 group 相關檢索函式 ===
+def group_retrieval(raw_input_text: str, top_k: int = 3):
+    """
+    執行 3-2 group 相關的檢索流程。
+    """
+    print(f"處理使用者輸入: '{raw_input_text}'")
 
-        # === 抽取關鍵字 ===
-        keywords = pull_ingredients(raw_input_text, ingredient_set)
-
-        # 指定飲食分類但無關鍵字 → 隨機推薦
-        if classes and not keywords and allowed_ids:
-            sample_ids = random.sample(allowed_ids, k=min(3, len(allowed_ids)))
-            for rid in sample_ids:
-                rec = get_recipe_by_id(rid)
-                if rec:
-                    pretty_print({"id": rid, "score": 1.0, "recipe": rec})
-            continue
-
-        # 抽不到可用關鍵字 → Google 備援
-        if not keywords:
-            print("⚠️ 未偵測到任何可用食材，改為網路搜尋模式…")
-            hits = google_search_recipes(raw_input_text, k=5)
-            summary = summarize_search_results(raw_input_text, hits)
-            print(summary)
-            continue
-
-        # === 核心排序：Tag + 向量排序（僅在 allowed_ids 範圍） ===
-        results = tag_then_vector_rank(
-            user_text=raw_input_text,
-            tokens_from_jieba=keywords,
-            top_k=5,
-            candidate_ids=allowed_ids  # 只對符合飲食條件的食譜排序
+    if not CLASSIFY_MAP:
+        return json.dumps(
+            {"error": "無法連線至資料庫，請稍後再試。"}, ensure_ascii=False, indent=2
         )
 
-        if not results:
-            print("⚠️ 本地資料庫查無結果，嘗試網路搜尋…")
-            hits = google_search_recipes(raw_input_text, k=5)
-            summary = summarize_search_results(raw_input_text, hits)
-            print(summary)
-            continue
+    # 1. 偵測所有飲食關鍵字
+    is_vegetarian = any(kw in raw_input_text for kw in ["素食"])
+    is_non_vegetarian = any(kw in raw_input_text for kw in ["葷食"])
+    is_no_pork = any(kw in raw_input_text for kw in ["不吃豬肉", "無豬", "穆斯林"])
 
-        print("\n正在自動推薦最適合的食譜...\n")
+    # 偵測關鍵字，用來處理衝突
+    keywords = pull_ingredients(raw_input_text, ingredient_set)
+    # 修正：用 PORK_PRODUCTS 集合判斷是否包含任何豬肉製品
+    contains_pork_ingr = any(k in keywords for k in PORK_PRODUCTS)
+    contains_beef_ingr = "牛肉" in keywords
+
+    # 2. 處理嚴謹條件衝突
+    # 2-1) 素食優先於任何肉類
+    if is_vegetarian and (contains_pork_ingr or contains_beef_ingr):
+        print("偵測到素食與肉類衝突，優先考慮素食，忽略肉類關鍵字。")
+        # 修正：使用 PORK_PRODUCTS 集合來排除關鍵字
+        keywords = [k for k in keywords if k not in PORK_PRODUCTS and k != "牛肉"]
+    # 2-2) 葷食與素食衝突
+    if is_vegetarian and is_non_vegetarian:
+        return json.dumps(
+            {"error": "素食與葷食條件衝突，請明確選擇一種。"},
+            ensure_ascii=False,
+            indent=2,
+        )
+    # 2-3) 穆斯林(無豬)優先於豬肉
+    if is_no_pork and contains_pork_ingr:
+        print("偵測到無豬肉與豬肉關鍵字衝突，優先考慮無豬肉，忽略豬肉關鍵字。")
+        # 修正：使用 PORK_PRODUCTS 集合來排除關鍵字
+        keywords = [k for k in keywords if k not in PORK_PRODUCTS]
+
+    # 3. 建立所有食譜 ID 的集合作為篩選起點
+    all_recipe_ids = set(CLASSIFY_MAP.keys())
+    candidate_ids: Set[str] = set()
+
+    # 4. 依序應用過濾器
+    if is_vegetarian:
+        candidate_ids = {
+            rid for rid, info in CLASSIFY_MAP.items() if info.get("vegetarian", False)
+        }
+    elif is_non_vegetarian:
+        candidate_ids = {
+            rid
+            for rid, info in CLASSIFY_MAP.items()
+            if not info.get("vegetarian", False)
+        }
+
+    if not candidate_ids:
+        candidate_ids = all_recipe_ids
+
+    if is_no_pork:
+        pork_free_ids = {
+            rid
+            for rid, info in CLASSIFY_MAP.items()
+            if not info.get("uses_pork", False)
+        }
+        candidate_ids = candidate_ids.intersection(pork_free_ids)
+
+    # 5. 處理特殊情況：只指定 group 但無關鍵字
+    if (is_vegetarian or is_non_vegetarian or is_no_pork) and not keywords:
+        print("偵測到特殊飲食條件，但沒有關鍵食材，隨機推薦符合條件的食譜...")
+
+        if not candidate_ids:
+            return json.dumps(
+                {"error": "無法找到符合所有飲食條件的食譜。請嘗試放寬條件。"},
+                ensure_ascii=False,
+                indent=2,
+            )
+
+        sample_ids = random.sample(
+            list(candidate_ids), k=min(top_k, len(candidate_ids))
+        )
+
+        results = []
+        for rid in sample_ids:
+            rec = get_recipe_by_id(str(rid))
+            if rec:
+                results.append({"id": rid, "score": 1.0, "recipe": rec})
+
+        summary_str = call_openai_llm(raw_input_text, results)
+        return summary_str
+
+    # 6. 核心檢索：Tag + 向量排序
+    if not keywords:
+        return json.dumps(
+            {"error": "未偵測到任何可用關鍵字，請嘗試更具體的描述。"},
+            ensure_ascii=False,
+            indent=2,
+        )
+
+    print("正在對符合條件的食譜進行向量排序...")
+
+    results = tag_then_vector_rank(
+        user_text=raw_input_text,
+        tokens_from_jieba=keywords,
+        candidate_ids=list(candidate_ids),
+        top_k=top_k,
+    )
+
+    if not results:
+        return json.dumps({"error": "查無結果。"}, ensure_ascii=False, indent=2)
+
+    # 7. 將結果傳給 LLM 進行整理與輸出
+    try:
+        summary_str = call_openai_llm(raw_input_text, results)
+        return summary_str
+    except Exception as e:
+        return json.dumps({"error": f"LLM 摘要失敗: {e}"}, ensure_ascii=False, indent=2)
+
+
+# === 測試區塊 ===
+def test_group_retriever():
+    """提供一些預設輸入進行測試"""
+    print("--- 執行 3-2 群組檢索功能自動測試 ---")
+
+    test_cases = [
+        # "素食食譜，要有番茄",
+        # "穆斯林想做蔥爆牛肉",
+        # "不吃豬肉，我想要蔥爆牛肉",
+        # 蒜末 蒜頭
+        "我想要素食",
+        # 豬絞肉 豬肉片 梅花豬肉片
+        "我想要穆斯林食譜",
+        "素食食譜，但我想吃牛肉",
+        "我要素食，要有洋蔥和豆腐",
+        "我要穆斯林，想要貢丸和醬油",
+        "我想要素食，但我想吃雞蛋",
+        "我要素食，有花椰菜胡蘿蔔",
+    ]
+
+    for case in test_cases:
+        print(f"\n[測試案例] 輸入: '{case}'")
+        summary_str = group_retrieval(case)
+
         try:
-            summary = call_ollama_llm(raw_input_text, results)
-            print(summary)
-        except Exception as e:
-            print("[WARN] LLM 摘要失敗：", repr(e))
-            continue
+            summary_json = json.loads(summary_str)
+            print(
+                "\n[AI 推薦摘要]\n"
+                + json.dumps(summary_json, ensure_ascii=False, indent=2)
+            )
+        except (json.JSONDecodeError, TypeError):
+            print("\n[AI 推薦摘要]\n" + summary_str)
 
-        # 詢問是否查看詳細食譜
-        view_choice = input("\n是否查看詳細食譜？輸入 y 查看 / n 跳過：").strip().lower()
-        if view_choice == "y":
-            id_input = input("請輸入要查看的食譜 ID：").strip()
-            if id_input.isdigit():
-                rec = get_recipe_by_id(id_input)
-                if rec:
-                    pretty_print({"id": id_input, "score": 1.0, "recipe": rec})
-                else:
-                    print("❌ 查無此 ID 的食譜")
-            else:
-                print("❌ ID 必須是數字")
+        print("-" * 50)
 
 
+# 僅在直接執行此檔案時執行測試
 if __name__ == "__main__":
-    main()
+    test_group_retriever()

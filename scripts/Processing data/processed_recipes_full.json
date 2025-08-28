@@ -1,0 +1,6538 @@
+{
+    "105379": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "107604": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "108045": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "121269": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "138618": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "187769": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "197817": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "225421": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "242917": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "251197": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "255271": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "256847": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "258575": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "266916": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "271682": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "275075": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "295754": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "295756": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "299423": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "299992": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "300195": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "311304": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "311804": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "314603": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "319333": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "320896": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "322065": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "322642": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "324143": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "332324": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "333061": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "333647": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "334301": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "334699": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "335651": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "342237": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "343153": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "346965": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "351420": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "351823": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "352892": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "355339": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "358167": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "362026": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "364467": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "368035": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "370158": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "374121": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "374139": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "374590": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "375078": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "376544": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "378770": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "379428": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "385223": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "385524": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "386102": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "386514": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "390400": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "391945": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "395198": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "395233": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "396349": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "400285": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "400837": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "401115": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "402491": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "404848": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "405150": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "406317": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "406925": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "407170": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "407179": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "408206": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "408706": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "409180": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "409712": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "409853": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "410030": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "410121": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "410323": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "410351": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "410382": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "410626": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "410709": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "411308": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "411524": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "412248": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "412379": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "412480": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "414124": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "414976": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "415973": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "416107": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "416414": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "416776": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "416781": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "416846": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "416910": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "416943": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "417045": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "417073": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "417085": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "417460": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "418002": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "419215": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "419335": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "420354": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "420367": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "421878": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "422615": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "422712": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "422777": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "423604": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "423652": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "423726": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "423814": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "423918": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "424188": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "424392": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "425055": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "425292": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "425372": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "425852": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "426480": {
+        "vegetarian": true,
+        "uses_pork": true
+    },
+    "427549": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "428198": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "428700": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "428985": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "429638": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "429746": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "430698": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "430861": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "430882": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "431254": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "431269": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "431345": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "431635": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "431828": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "431868": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "431936": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "431964": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "432022": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "432465": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "433676": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "433712": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "433844": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "433916": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "434216": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "434291": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "434308": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "434469": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "434594": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "434829": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "434838": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "435037": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "435101": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "435634": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "435693": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "435823": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "435873": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "435893": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "435958": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "436149": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "436268": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "436484": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "436784": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "436874": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "436886": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "436937": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "437407": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "437603": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "437747": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "437922": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "437958": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "437998": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "438011": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "438032": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "438322": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "438346": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "438456": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "438922": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "439052": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "439159": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "439242": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "439269": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "439285": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "439331": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "439586": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "439878": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "439990": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "440136": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "440468": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "440491": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "440580": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "440694": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "440748": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "440910": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "441130": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "441186": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "441311": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "441364": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "441509": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "441676": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "441933": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "441959": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "441984": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "442095": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "442796": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "442922": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "442985": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443055": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443158": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443180": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443249": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443281": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443303": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443420": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443593": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443650": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "443670": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443683": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443730": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "443733": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "443952": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "444161": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "444177": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "444180": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "444347": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "444377": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "444400": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "444402": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "444431": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "444435": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "444599": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "444740": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "444811": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "444937": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "444995": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445002": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445217": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "445233": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445241": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "445288": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "445318": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445347": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445352": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445423": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445425": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445445": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "445559": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "445694": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "445696": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "445798": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "445833": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "445936": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "446043": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "446047": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "446118": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "446328": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "446389": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "446399": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "446450": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "446534": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "446554": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "446736": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "446748": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "446753": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "446916": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "446918": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "446973": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447112": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "447202": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "447254": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447379": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447412": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447450": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447474": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447656": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447706": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "447793": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "447798": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "447817": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "447999": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "448113": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "448142": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "448182": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "448201": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448233": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "448247": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448456": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448614": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448643": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448662": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "448740": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "448811": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448818": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448828": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448853": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448873": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "448879": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "449152": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449344": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449348": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449387": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449408": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449416": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449444": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449517": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449539": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449541": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449548": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "449575": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "449587": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449655": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449660": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449800": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449826": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449865": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "449881": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449912": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "449916": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "449971": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "449995": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450054": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450205": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450223": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450225": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450230": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450281": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450349": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "450393": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450542": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450637": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450681": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450682": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450739": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450744": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "450755": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450812": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450822": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450850": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450854": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "450856": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450943": {
+        "vegetarian": true,
+        "uses_pork": true
+    },
+    "450947": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450956": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450964": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "450968": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "451057": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "451142": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "451206": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "451237": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "451242": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "451304": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "451307": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "451330": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "451391": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "451409": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "451853": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "451864": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "451941": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "451942": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "451943": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "452093": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "452105": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "452143": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "452265": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "452280": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "452329": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "452411": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "452414": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "452528": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "452547": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "452640": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "452726": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "452743": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "452836": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "452953": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453012": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453049": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453093": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "453142": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453205": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "453363": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "453420": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453433": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "453453": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453476": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453590": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "453640": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453743": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453840": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "453855": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "453904": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "453928": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "453947": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "454053": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454077": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "454126": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "454159": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454267": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "454268": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "454274": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454322": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "454384": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454573": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "454597": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454605": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "454675": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "454684": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "454819": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454884": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454944": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "454957": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455190": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455206": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "455280": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "455347": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "455348": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455362": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "455364": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455365": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455427": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "455480": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455491": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "455493": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455587": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455698": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "455699": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455783": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "455812": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "455920": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455972": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455973": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "455974": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456061": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456065": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456120": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456160": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456202": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456261": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456315": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456329": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456376": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456487": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456490": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456492": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456522": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456570": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "456581": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "456597": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456620": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "456623": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "456895": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456900": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "456907": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "456922": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457054": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "457162": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457324": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "457350": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457405": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457436": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457465": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457510": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457527": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "457559": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457579": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457590": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457610": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "457707": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457714": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457754": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457755": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457757": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457758": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457759": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457777": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "457834": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "457864": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457868": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457944": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457986": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "457997": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458001": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458048": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458050": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458089": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458094": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458101": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458142": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458171": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458174": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458211": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458239": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458375": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "458389": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458477": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458513": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "458520": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "458528": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458574": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458622": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "458640": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "458690": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458750": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458857": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458873": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458877": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "458930": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "458937": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "458983": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "459037": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459048": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "459089": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459090": {
+        "vegetarian": true,
+        "uses_pork": true
+    },
+    "459110": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "459124": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459149": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459184": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459253": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459258": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459297": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459355": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459359": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459384": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459396": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "459428": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459458": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459460": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459461": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "459512": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459515": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459571": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459598": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "459637": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459685": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459721": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459722": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459787": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459833": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "459864": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459920": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "459943": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "459954": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460005": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460082": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460162": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460170": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460172": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460212": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460228": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460290": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460354": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460358": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460406": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460417": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460424": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460460": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460474": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460476": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460496": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460508": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460509": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460544": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460562": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460567": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460570": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460616": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460672": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460724": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460725": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460730": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "460833": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460877": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "460932": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460938": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "460939": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461042": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461098": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461132": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461143": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461178": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461186": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461298": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461342": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461356": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461412": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461417": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461420": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461441": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461452": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461461": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461479": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461482": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461526": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461565": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461567": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461571": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461585": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461589": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461605": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461630": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461633": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461635": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461647": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461671": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461696": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461708": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461730": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461783": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461785": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461790": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461876": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461882": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461913": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "461918": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "461935": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "461995": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462004": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462017": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462059": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "462073": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462076": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462080": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462097": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462112": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462127": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462191": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462213": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462232": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462260": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "462261": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462263": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462299": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462323": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462368": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462373": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462384": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462394": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "462397": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462401": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462432": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462545": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462551": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462579": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462580": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462589": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462607": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462631": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "462730": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462757": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462759": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "462767": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462770": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "462783": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462791": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462892": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "462898": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "462958": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463002": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463044": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463045": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463047": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463070": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463085": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463094": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463104": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463135": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463144": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463145": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463219": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463337": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463390": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463444": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463501": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463523": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463551": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463555": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463585": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463595": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463677": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463683": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463697": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463737": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463788": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463817": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463829": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463854": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463863": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463882": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463886": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463924": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "463987": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "463989": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "463991": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464010": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464012": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464048": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464166": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464199": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464217": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464233": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464260": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464264": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464300": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464337": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464358": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464362": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464370": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464401": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464552": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464579": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464611": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464633": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464635": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464645": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464650": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464675": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464677": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464688": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464699": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464718": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464735": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464830": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464875": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464883": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464897": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "464916": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "464951": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "464974": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465023": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465026": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "465106": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465177": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465208": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465211": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465301": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465353": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465358": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465406": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465457": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465464": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465473": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "465490": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "465542": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465545": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465549": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465571": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465652": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465655": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465688": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465710": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465745": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465766": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465802": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465841": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465865": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465867": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465869": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465874": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "465877": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "465890": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "465967": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466042": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466098": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466099": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466120": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466125": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466129": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466156": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466176": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466177": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466233": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466277": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466302": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466305": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466402": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466425": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466440": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466441": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466448": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466516": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466517": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466528": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466533": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466542": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466548": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466559": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466584": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466586": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466615": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466616": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466635": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466641": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466677": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466689": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466705": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466715": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466716": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466768": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466773": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466778": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466805": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466813": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466814": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466841": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "466871": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466875": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "466915": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "466976": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467004": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467028": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467029": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467048": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467078": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467095": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467119": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467122": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467173": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467184": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467185": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "467320": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467399": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467404": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467438": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467448": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467462": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "467464": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467492": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467527": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "467565": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467595": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467614": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467654": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467657": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "467671": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "467684": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467720": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467736": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "467825": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467826": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467842": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467864": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "467919": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467957": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "467984": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468005": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "468041": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468092": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468098": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468160": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468275": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468298": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468318": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468326": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468366": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468380": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468399": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468428": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468448": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468451": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468453": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468481": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468497": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468501": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468527": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468547": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468566": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468576": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468587": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "468588": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "468592": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468605": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468673": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468683": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "468701": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468881": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468919": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468936": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "468950": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468979": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "468994": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469000": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469012": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469045": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469070": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469076": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469116": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469124": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469125": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469158": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469168": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469169": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469214": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469225": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469254": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469274": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469280": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469305": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469307": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469314": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469328": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469343": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469361": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469397": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469454": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469456": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469464": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469471": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469493": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469506": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469539": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469554": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469555": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469591": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469622": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469656": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469685": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469692": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469696": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469712": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469723": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469727": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469737": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469769": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469774": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469782": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469852": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469856": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469860": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469861": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469872": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "469901": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "469925": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "469932": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470017": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470067": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470070": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470087": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470103": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470115": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470117": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470183": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470184": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470221": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470222": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470238": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470244": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470275": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470289": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470293": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470305": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470308": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470330": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470338": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470379": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470396": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470398": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470422": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470442": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470451": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470473": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470474": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470497": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470598": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470649": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470697": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470703": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470719": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470733": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470784": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470817": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470845": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470852": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470859": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470862": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470863": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470866": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470880": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470881": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470903": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470905": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470906": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470942": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470956": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "470966": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "470967": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "470977": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471002": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471026": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471061": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471099": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471113": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471124": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471143": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471221": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471222": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471232": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471271": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471272": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471273": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471346": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471381": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471405": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471449": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471465": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471496": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471498": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471499": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471512": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471538": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471578": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471588": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471608": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471612": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471620": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471625": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471639": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471654": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471656": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471659": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471731": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471838": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471857": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471861": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471922": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471942": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471965": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471966": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471967": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471974": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471978": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471980": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "471981": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "471984": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "471992": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472040": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472055": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472056": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472102": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472109": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472160": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472163": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472182": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472200": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472217": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472221": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472222": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472234": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472239": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472243": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472247": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472255": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472264": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472272": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472273": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472299": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472300": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472309": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472311": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472328": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472364": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472370": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472378": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472382": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472384": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472394": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472396": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472405": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472415": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472462": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472494": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472630": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472633": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "472644": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472672": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472673": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472679": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472702": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472707": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472718": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472745": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472762": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472766": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472793": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472801": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472830": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "472864": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472909": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "472914": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473010": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473059": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473064": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473076": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473080": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473088": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473155": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473161": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473162": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473169": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473190": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473200": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473230": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473236": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473238": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473242": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473245": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473252": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473261": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473284": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473348": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473352": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473379": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473396": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473404": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473405": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473407": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473412": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473420": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473421": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473434": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473459": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473476": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473524": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473604": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473605": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473626": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473652": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473664": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473667": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473702": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473712": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473714": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473718": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473731": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473735": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473749": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473766": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473780": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473790": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473814": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473828": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473830": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473832": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473836": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473842": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473843": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473862": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473882": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473886": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473888": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "473890": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473914": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473917": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473934": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473947": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "473953": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473982": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "473983": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474021": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474024": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474034": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474044": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474048": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474061": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474062": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474064": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474067": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474076": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474077": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474095": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474107": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474142": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474172": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474184": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474189": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474201": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474219": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474220": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474237": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474252": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474259": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474268": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474291": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474327": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474346": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474361": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474386": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474407": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474408": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474415": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474441": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474469": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474489": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474494": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474497": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474505": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474537": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474541": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474553": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474571": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474619": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474629": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474656": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474678": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474705": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474752": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474759": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474763": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474764": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474766": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474785": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474819": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474828": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474832": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474852": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474890": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474911": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474922": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "474926": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "474958": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474962": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "474963": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475018": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475023": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475048": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475057": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475069": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475070": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475087": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475089": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475092": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475093": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475103": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475109": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475123": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475133": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475139": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475151": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475154": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475159": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475165": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475167": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475254": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475259": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475267": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475277": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475293": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475306": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475321": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475343": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475352": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475355": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475357": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475389": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475393": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475421": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475438": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475449": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475471": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475472": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475481": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475483": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475494": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475505": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475551": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475601": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475631": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475638": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475642": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475651": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475683": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475685": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475690": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475697": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475705": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475715": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475718": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475722": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475734": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475758": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475779": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475809": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475826": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475843": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "475870": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475878": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475886": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475913": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475926": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "475935": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475970": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "475980": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476026": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476031": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476054": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476092": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476125": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476128": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476135": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476149": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476189": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476212": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476231": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476240": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476258": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476260": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476261": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476270": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476284": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476285": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476287": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476291": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476293": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476300": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476315": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476317": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476330": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476336": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476344": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476351": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476357": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476390": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476393": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476415": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476427": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476439": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476442": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476461": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476481": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476492": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476499": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476507": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476517": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476542": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476559": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476583": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476584": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476585": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476586": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476646": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476648": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476660": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476663": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476687": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476698": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476726": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476746": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476757": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476769": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476779": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476788": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476804": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476835": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476867": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476872": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476887": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476895": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476919": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "476955": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476957": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476966": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "476977": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476982": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476993": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476994": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "476996": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477009": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477018": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477026": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477027": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477029": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477036": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477038": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477053": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477078": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477081": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477082": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477085": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477106": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477110": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477114": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477146": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477155": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477161": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477173": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477190": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477194": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477202": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477203": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477209": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477223": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477225": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477244": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477246": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477265": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477284": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477300": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477309": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477313": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477314": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477316": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477321": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477323": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477326": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477333": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477339": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477340": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477341": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477342": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477349": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477365": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477384": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477385": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477393": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477399": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477403": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477411": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477422": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477435": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477438": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477440": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477443": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477449": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477474": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477484": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477488": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477490": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477510": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477519": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477527": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477531": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477539": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477598": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477606": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477615": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477620": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477626": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477648": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477654": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477675": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477677": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477678": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477689": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477692": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477700": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477731": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477752": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477770": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477793": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477794": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477798": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477810": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477824": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477826": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477847": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477854": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477861": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477863": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477885": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477896": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477917": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477919": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477936": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477943": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477961": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477964": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477968": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "477970": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "477977": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "477997": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478003": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478020": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478036": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478067": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478086": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478143": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478166": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478173": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478176": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478205": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478227": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478228": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478236": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478268": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478299": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478300": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478344": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478350": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478352": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478381": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478389": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478410": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478430": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478439": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478463": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478486": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478488": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478492": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478495": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478519": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478545": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478556": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478569": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478578": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478582": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478597": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478600": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478631": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478654": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478671": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478673": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478677": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478697": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478715": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478722": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478733": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478741": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478752": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478759": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478763": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478783": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478794": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478830": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478838": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478857": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478858": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478869": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478873": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478880": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478881": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478883": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478901": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478929": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478933": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478937": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478946": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478970": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "478980": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "478985": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478997": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "478999": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479016": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479026": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479032": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479045": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479070": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479085": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479094": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479103": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479116": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479123": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479126": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479142": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479148": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479150": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479156": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479161": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479165": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479171": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479174": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479175": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479182": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479194": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479212": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479222": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479230": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479244": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479255": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479259": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479265": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479267": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479270": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479278": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479305": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479307": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479327": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479334": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479361": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479366": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479378": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479390": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479391": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479392": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479409": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479412": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479426": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479428": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479446": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479457": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479459": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479480": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479504": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479507": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479510": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479518": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479528": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479530": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479531": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479547": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479548": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479550": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479551": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479552": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479553": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479554": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479557": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479559": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479560": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479561": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479576": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479580": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479583": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479607": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479620": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479623": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479657": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479663": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479669": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479702": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479707": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479713": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479714": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479732": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479735": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "479736": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479737": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479748": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479751": {
+        "vegetarian": false,
+        "uses_pork": false
+    },
+    "479774": {
+        "vegetarian": true,
+        "uses_pork": false
+    },
+    "479802": {
+        "vegetarian": false,
+        "uses_pork": true
+    },
+    "86682": {
+        "vegetarian": false,
+        "uses_pork": false
+    }
+}

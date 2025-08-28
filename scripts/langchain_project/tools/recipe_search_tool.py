@@ -10,7 +10,7 @@ from typing import Dict, List
 from langchain_core.tools import tool
 
 # 懶載入 ingredient_set
-from scripts.database.ingredient_utils import build_ingredient_set_from_db
+from scripts.database.ingredient_utils import build_ingredient_set_from_json
 from scripts.RAG.search_engine import (
     pull_ingredients,            
     tag_then_vector_rank,                              
@@ -31,7 +31,9 @@ _ING_SET = None
 def _get_ing_set():
     global _ING_SET
     if _ING_SET is None:
-        _ING_SET = build_ingredient_set_from_db()  # 內部也會把詞加進 jieba 字典
+        # 使用正確的 JSON 檔案路徑
+        json_file_path = "scripts/Processing data/processed_recipes_full.json"
+        _ING_SET = build_ingredient_set_from_json(json_file_path)  # 內部也會把詞加進 jieba 字典
     return _ING_SET
 
 

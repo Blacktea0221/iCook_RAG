@@ -6,7 +6,7 @@
 
 python版本:3.10.11
 建立虛擬環境:python -m venv venv
-如果vscode有其他版本:py -3.10 -m venv venv
+如果vscode有其他版本:py -3.10 -m venv venv310
 啟動虛擬環境:.\venv\Scripts\activate
 退出虛擬環境:deactivate
 
