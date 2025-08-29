@@ -46,7 +46,7 @@ class GraphState(TypedDict, total=False):
     present: Dict[str, Any]
     error: str
 
-
+# 分類的第二層保險  當llm可能分類錯誤  透過程式端進行修正
 def _has_month_or_season_trigger(text: str) -> bool:
     t = (text or "").lower()
     # 1~12 月（阿拉伯數字）
@@ -160,28 +160,11 @@ def _has_price_trigger(text: str) -> bool:
 
 def _has_constraint_trigger(text: str) -> bool:
     t = (text or "").lower()
-    return any(
-        k in t
-        for k in [
-            "素食",
-            "蔬食",
-            "純素",
-            "全素",
-            "蛋奶素",
-            "vegan",
-            "vegetarian",
-            "不吃豬",
-            "不要豬",
-            "無豬",
-            "不含豬",
-            "禁豬",
-            "no pork",
-            "清真",
-            "halal",
-            "不要培根",
-            "不吃培根",
-        ]
-    )
+    return any(k in t for k in [
+        "素食","蔬食","純素","全素","蛋奶素","vegan","vegetarian",
+        "不吃豬","不要豬","無豬","不含豬","禁豬","no pork",
+        "清真","halal","穆斯林","回教","伊斯蘭","伊斯兰","不要培根","不吃培根"
+    ])
 
 
 def _looks_like_dish_name(text: str) -> bool:
@@ -247,28 +230,13 @@ def node_router(state: GraphState) -> GraphState:
 def _detect_constraints_from_text(text: str) -> dict:
     t = (text or "").lower()
     diet = None
-    # 素食相關（可再擴充）
-    if any(
-        k in t
-        for k in ["素食", "蔬食", "純素", "全素", "vegan", "vegetarian", "蛋奶素"]
-    ):
+    if any(k in t for k in ["素食","蔬食","純素","全素","vegan","vegetarian","蛋奶素"]):
         diet = "vegetarian"
-    # 禁豬/清真
-    no_pork = any(
-        k in t
-        for k in [
-            "不吃豬",
-            "不要豬",
-            "無豬",
-            "不含豬",
-            "禁豬",
-            "no pork",
-            "清真",
-            "halal",
-            "不要培根",
-            "不吃培根",
-        ]
-    )
+    # 把穆斯林/清真也視為不吃豬
+    no_pork = any(k in t for k in [
+        "不吃豬","不要豬","無豬","不含豬","禁豬","no pork",
+        "清真","halal","穆斯林","回教","伊斯蘭","伊斯兰","不要培根","不吃培根"
+    ])
     return {"diet": diet, "no_pork": no_pork}
 
 
@@ -354,103 +322,37 @@ def node_search(state: GraphState) -> GraphState:
             return res.get("results") or []
         return res or []
 
-    def _passes_constraints(item: Dict[str, Any]) -> bool:
-        title = (item.get("title") or "").lower()
-        tags = [str(t).lower() for t in (item.get("preview_tags") or [])]
+    # ※ 嚴格模式下不再使用內容層過濾；_passes_constraints 可刪可留（此函式已不再呼叫）
 
-        banned_meats = {
-            "培根",
-            "豬",
-            "豬肉",
-            "五花肉",
-            "火腿",
-            "肉燥",
-            "香腸",
-            "絞肉",
-            "牛",
-            "牛肉",
-            "羊",
-            "雞",
-            "雞肉",
-            "鴨",
-            "鵝",
-            "魚",
-            "鮭",
-            "鯖",
-            "鮪",
-            "蝦",
-            "蟹",
-            "花枝",
-            "章魚",
-            "蛤蜊",
-            "牡蠣",
-        }
-        if cons.get("no_pork"):
-            if any(w in title for w in ["培根", "豬", "豬肉", "五花肉", "火腿"]) or any(
-                any(w in t for w in ["培根", "豬", "豬肉", "五花肉", "火腿"])
-                for t in tags
-            ):
-                return False
-        if cons.get("diet") == "vegetarian":
-            if any(w in title for w in banned_meats) or any(
-                any(w in t for w in banned_meats) for t in tags
-            ):
-                return False
-        return True
-
-    # 1) 食譜名稱：全文檢索（同樣可吃候選集）
+    # 1) 食譜名稱：只在候選集合內檢索；若有 constraints 但沒有 candidate_ids → 直接回空
     if sub.get("sub_intent") == "食譜名稱":
         name_q = (sub.get("name_query") or "").strip()
         if not name_q:
             return {"results": []}
+        cand = state.get("candidate_ids") or []
+        if cons and not cand:
+            return {"results": []}
         tool = RecipeRetrieverTool()
-        res = tool.run(
-            {
-                "query_text": name_q,
-                "top_k": k,
-                "candidate_ids": state.get("candidate_ids") or [],
-            }
-        )
+        res = tool.run({"query_text": name_q, "top_k": k, "candidate_ids": cand})
         items = _unwrap(res)
-        if cons:
-            items = [it for it in items if _passes_constraints(it)]
-        return {"results": items}
-
-    # 2) 特殊需求：優先在候選集合內召回；若空，降級一般召回+內容過濾
-    if sub.get("sub_intent") == "特殊需求":
-        tool = RecipeSearchTool()
-        first = tool.run(
-            {
-                "user_text": state["text"],
-                "top_k": k,
-                "candidate_ids": state.get("candidate_ids") or [],
-            }
-        )
-        items = _unwrap(first)
-
-        if not items:
-            general = tool.run(
-                {
-                    "user_text": state["text"],
-                    "top_k": max(k * 2, 10),  # 多抓一些，過濾後再截 k
-                    "candidate_ids": [],
-                }
-            )
-            items = _unwrap(general)
-
-        if cons:
-            items = [it for it in items if _passes_constraints(it)]
         return {"results": items[:k]}
 
-    # 3) 食材查詢（預設）：也吃 candidate_ids（若先前有產生）
+    # 2) 特殊需求：嚴格模式 → 只在 candidate_ids 子集合內召回；沒有候選就回空
+    if sub.get("sub_intent") == "特殊需求":
+        cand = state.get("candidate_ids") or []
+        if cons and not cand:
+            return {"results": []}
+        tool = RecipeSearchTool()
+        res = tool.run({"user_text": state["text"], "top_k": k, "candidate_ids": cand})
+        items = _unwrap(res)
+        return {"results": items[:k]}
+
+    # 3) 食材查詢（預設）：也尊重 candidate_ids；若有 constraints 但沒有候選 → 回空
+    cand = state.get("candidate_ids") or []
+    if cons and not cand:
+        return {"results": []}
     tool = RecipeSearchTool()
-    res = tool.run(
-        {
-            "user_text": state["text"],
-            "top_k": k,
-            "candidate_ids": state.get("candidate_ids") or [],
-        }
-    )
+    res = tool.run({"user_text": state["text"], "top_k": k, "candidate_ids": cand})
     return {"results": _unwrap(res)}
 
 
