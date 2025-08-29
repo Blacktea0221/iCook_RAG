@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 from typing import Any, Dict, List, TypedDict
 
+from braintrust import init_logger
 from langchain.schema import HumanMessage, SystemMessage
 from langgraph.graph import END, StateGraph
 
@@ -27,6 +29,9 @@ from scripts.langchain_project.tools.web_search_tool import (
     WebSearchTool,
 )
 
+BT_PROJECT = os.getenv("BT_PROJECT", "iCook-RAG")
+bt_logger = init_logger(project=BT_PROJECT)
+
 PROMPTS_DIR = Path(__file__).resolve().parent / "prompts"
 ROUTER_PROMPT = (PROMPTS_DIR / "router_prompt.txt").read_text(encoding="utf-8")
 SUB_ROUTER_PROMPT = (PROMPTS_DIR / "sub_router_prompt.txt").read_text(encoding="utf-8")
@@ -45,6 +50,9 @@ class GraphState(TypedDict, total=False):
     results: List[Dict[str, Any]]
     present: Dict[str, Any]
     error: str
+    bt_router_span_id: str
+    bt_subrouter_span_id: str
+
 
 # 分類的第二層保險  當llm可能分類錯誤  透過程式端進行修正
 def _has_month_or_season_trigger(text: str) -> bool:
@@ -160,11 +168,32 @@ def _has_price_trigger(text: str) -> bool:
 
 def _has_constraint_trigger(text: str) -> bool:
     t = (text or "").lower()
-    return any(k in t for k in [
-        "素食","蔬食","純素","全素","蛋奶素","vegan","vegetarian",
-        "不吃豬","不要豬","無豬","不含豬","禁豬","no pork",
-        "清真","halal","穆斯林","回教","伊斯蘭","伊斯兰","不要培根","不吃培根"
-    ])
+    return any(
+        k in t
+        for k in [
+            "素食",
+            "蔬食",
+            "純素",
+            "全素",
+            "蛋奶素",
+            "vegan",
+            "vegetarian",
+            "不吃豬",
+            "不要豬",
+            "無豬",
+            "不含豬",
+            "禁豬",
+            "no pork",
+            "清真",
+            "halal",
+            "穆斯林",
+            "回教",
+            "伊斯蘭",
+            "伊斯兰",
+            "不要培根",
+            "不吃培根",
+        ]
+    )
 
 
 def _looks_like_dish_name(text: str) -> bool:
@@ -191,56 +220,87 @@ def node_router(state: GraphState) -> GraphState:
     text = state["text"]
     llm = get_chat_model("router")
     messages = [SystemMessage(content=ROUTER_PROMPT), HumanMessage(content=text)]
-    try:
-        out = llm.invoke(messages).content
-    except Exception:
-        # LLM 失敗時：優先級 nutrition > price > seasonal > recipe > other
-        if _has_nutrition_trigger(text):
-            return {"intent": "nutrition"}
-        if _has_price_trigger(text):
-            return {"intent": "price"}
-        if _has_month_or_season_trigger(text):
-            return {"intent": "seasonal"}
-        if _has_constraint_trigger(text) or _looks_like_dish_name(text):
-            return {"intent": "recipe"}
-        return {"intent": "other"}
 
-    intent = "other"
-    try:
-        intent = IntentOut.model_validate_json(out).intent
-    except Exception:
+    # ★ 建 span：第一次 route
+    with bt_logger.start_span(name="router", type="llm", input={"text": text}) as s:
+        try:
+            out = llm.invoke(messages).content
+        except Exception:
+            # fallback（保底順序與你原本相同）
+            if _has_nutrition_trigger(text):
+                intent = "nutrition"
+            elif _has_price_trigger(text):
+                intent = "price"
+            elif _has_month_or_season_trigger(text):
+                intent = "seasonal"
+            elif _has_constraint_trigger(text) or _looks_like_dish_name(text):
+                intent = "recipe"
+            else:
+                intent = "other"
+            s.log(output={"raw_llm": None, "final_intent": intent, "fallback": True})
+            state["bt_router_span_id"] = s.id
+            return {"intent": intent, "bt_router_span_id": s.id}
+
         intent = "other"
+        try:
+            intent = IntentOut.model_validate_json(out).intent
+        except Exception:
+            intent = "other"
 
-    # ---- 覆寫保底（固定優先序）----
-    # 1) 有營養/價格觸發：一定分到 nutrition / price
-    if _has_nutrition_trigger(text):
-        intent = "nutrition"
-    elif _has_price_trigger(text):
-        intent = "price"
-    # 2) 有月份/季節觸發：一定分到 seasonal
-    elif _has_month_or_season_trigger(text):
-        intent = "seasonal"
-    # 3) 有飲食限制（素食/不吃豬…）或看起來像一道料理/醬料名：分到 recipe
-    elif _has_constraint_trigger(text) or _looks_like_dish_name(text):
-        intent = "recipe"
+        # 覆寫保底（與你目前一致）
+        if _has_nutrition_trigger(text):
+            intent = "nutrition"
+        elif _has_price_trigger(text):
+            intent = "price"
+        elif _has_month_or_season_trigger(text):
+            intent = "seasonal"
+        elif _has_constraint_trigger(text) or _looks_like_dish_name(text):
+            intent = "recipe"
 
-    return {"intent": intent}
+        s.log(output={"raw_llm": out, "final_intent": intent})
+        state["bt_router_span_id"] = s.id
+        return {"intent": intent, "bt_router_span_id": s.id}
 
 
 def _detect_constraints_from_text(text: str) -> dict:
     t = (text or "").lower()
     diet = None
-    if any(k in t for k in ["素食","蔬食","純素","全素","vegan","vegetarian","蛋奶素"]):
+    if any(
+        k in t
+        for k in ["素食", "蔬食", "純素", "全素", "vegan", "vegetarian", "蛋奶素"]
+    ):
         diet = "vegetarian"
     # 把穆斯林/清真也視為不吃豬
-    no_pork = any(k in t for k in [
-        "不吃豬","不要豬","無豬","不含豬","禁豬","no pork",
-        "清真","halal","穆斯林","回教","伊斯蘭","伊斯兰","不要培根","不吃培根"
-    ])
+    no_pork = any(
+        k in t
+        for k in [
+            "不吃豬",
+            "不要豬",
+            "無豬",
+            "不含豬",
+            "禁豬",
+            "no pork",
+            "清真",
+            "halal",
+            "穆斯林",
+            "回教",
+            "伊斯蘭",
+            "伊斯兰",
+            "不要培根",
+            "不吃培根",
+        ]
+    )
     return {"diet": diet, "no_pork": no_pork}
 
 
 def node_sub_router(state: GraphState) -> GraphState:
+    """第二層子路由：
+    - LLM 先判：食譜查詢 / 特殊需求 / 食譜名稱
+    - 程式保底：
+        1) 只要偵測到素食/清真/不吃豬 → 強制「特殊需求」，並補 constraints
+        2) 若不是「特殊需求」且看起來像一道菜名/醬料名 → 強制「食譜名稱」，並帶 name_query
+    回傳同時把 constraints 放到 state 方便後續 node_constraints 使用
+    """
     if state.get("intent") != "recipe":
         return {}
 
@@ -249,24 +309,37 @@ def node_sub_router(state: GraphState) -> GraphState:
     text = state["text"]
     llm = get_chat_model("sub_router")
     messages = [SystemMessage(content=SUB_ROUTER_PROMPT), HumanMessage(content=text)]
-    raw = llm.invoke(messages).content
-    try:
-        sub = json.loads(raw)
-    except Exception:
-        sub = {"sub_intent": "食材查詢", "ingredients": [], "constraints": {}}
 
-    # ⛳ 強制覆寫：只要句子含有素食/禁豬等訊號 → 一律切到「特殊需求」，並補上 constraints
-    auto = _detect_constraints_from_text(text)
-    if auto.get("diet") or auto.get("no_pork"):
-        sub["sub_intent"] = "特殊需求"
-        cons = sub.get("constraints") or {}
-        if auto.get("diet") and not cons.get("diet"):
-            cons["diet"] = auto["diet"]
-        if auto.get("no_pork") and not cons.get("no_pork"):
-            cons["no_pork"] = True
-        sub["constraints"] = cons
+    with bt_logger.start_span(name="sub_router", type="llm", input={"text": text}) as s:
+        raw = llm.invoke(messages).content
+        try:
+            sub = json.loads(raw)
+        except Exception:
+            sub = {"sub_intent": "食材查詢", "ingredients": [], "constraints": {}}
 
-    return {"subroute": sub}
+        # 飲食限制保底（原樣）
+        auto = _detect_constraints_from_text(text)
+        if auto.get("diet") or auto.get("no_pork"):
+            sub["sub_intent"] = "特殊需求"
+            cons = sub.get("constraints") or {}
+            if auto.get("diet") and not cons.get("diet"):
+                cons["diet"] = auto["diet"]
+            if auto.get("no_pork") and not cons.get("no_pork"):
+                cons["no_pork"] = True
+            sub["constraints"] = cons
+
+        # 料理名保底（原樣）
+        if sub.get("sub_intent") != "特殊需求" and _looks_like_dish_name(text):
+            sub["sub_intent"] = "食譜名稱"
+            sub["name_query"] = text.strip()
+
+        s.log(output={"raw_llm": raw, "final_subroute": sub})
+        state["bt_subrouter_span_id"] = s.id
+        return {
+            "subroute": sub,
+            "constraints": sub.get("constraints") or {},
+            "bt_subrouter_span_id": s.id,
+        }
 
 
 def node_constraints(state: GraphState) -> GraphState:
@@ -398,8 +471,14 @@ def node_presenter(state: GraphState) -> GraphState:
             if i.get("id") is not None
         ],
         summary_text=txt,
-    )
-    return {"present": present.dict()}
+    ).dict()  # ← 先轉 dict 再加 bt 欄位
+
+    # ★ 附上 span id 供 API 回傳
+    if state.get("bt_router_span_id"):
+        present["bt_router_span_id"] = state["bt_router_span_id"]
+    if state.get("bt_subrouter_span_id"):
+        present["bt_subrouter_span_id"] = state["bt_subrouter_span_id"]
+    return {"present": present}
 
 
 def node_web_fallback_search(state: GraphState) -> GraphState:
@@ -435,6 +514,11 @@ def node_web_fallback_search(state: GraphState) -> GraphState:
         summary_text=body,
     ).dict()
     present["web_results"] = web_results
+    # ★ 附上 span id 供 API 回傳
+    if state.get("bt_router_span_id"):
+        present["bt_router_span_id"] = state["bt_router_span_id"]
+    if state.get("bt_subrouter_span_id"):
+        present["bt_subrouter_span_id"] = state["bt_subrouter_span_id"]
     return {"present": present}
 
 
@@ -477,6 +561,10 @@ def node_non_recipe_presenter(state: GraphState) -> GraphState:
         summary_text=body,
     ).dict()
     present["keywords"] = keywords  # ★ 關鍵：讓外層能拿到 LLM keywords
+    if state.get("bt_router_span_id"):
+        present["bt_router_span_id"] = state["bt_router_span_id"]
+    if state.get("bt_subrouter_span_id"):
+        present["bt_subrouter_span_id"] = state["bt_subrouter_span_id"]
     return {"present": present}
 
 

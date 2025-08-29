@@ -2,13 +2,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import os
 import re
 from typing import Any, Dict, List, Optional
 
 import jieba
+from braintrust import init_logger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
+BT_PROJECT = os.getenv("BT_PROJECT", "iCook-RAG")
+bt_logger = init_logger(project=BT_PROJECT)
 
 from scripts.langchain_project.orchestrator_graph import run_orchestrator
 
@@ -165,6 +170,14 @@ def _merge_keywords(ingredients: List[str], llm_kws: List[str]) -> List[str]:
     return out
 
 
+def _extract_bt(payload: Dict[str, Any]) -> Dict[str, str] | None:
+    r = payload.get("bt_router_span_id")
+    s = payload.get("bt_subrouter_span_id")
+    if r or s:
+        return {"router_span_id": r, "subrouter_span_id": s}
+    return None
+
+
 def _normalize_nutri_term(k: str) -> str:
     """把常見的營養詞變體正規化（僅在 intent=nutrition 使用）。"""
     s = str(k).strip().lower()
@@ -189,7 +202,7 @@ def _postprocess_keywords(
     - 正規化：水份/含水量/含水率/moisture → 水分；卡路里/calorie/calories/kcal → 熱量；蛋白/protein → 蛋白質
     - 若同時有「蛋白質」與「蛋白」→ 留蛋白質
     - 若已有具體維他命X → 移除泛稱「維他命」「維生素」
-    - 對營養類詞做子字串去重（不動食材）；若同時有「水分」與「水」→ 刪「水」
+    - 對營養類詞做子字串去重（不動食材）；若同時有「水」與「水分」→ 刪「水」
     - 去重保序
     """
     # 先移除「營養」
@@ -295,10 +308,18 @@ def route(req: RouteRequest) -> RouteResponse:
 
     if intent_out == "recipe":
         web_results = payload.get("web_results") or []
+        bt = _extract_bt(payload)
         if isinstance(web_results, list) and web_results:
-            return RouteResponse(intent="web_search", payload={"results": web_results})
+            out = {"results": web_results}
+            if bt:
+                out["bt"] = bt
+            return RouteResponse(intent="web_search", payload=out)
+
         summary = payload.get("summary_text") or ""
-        return RouteResponse(intent="recipe", payload={"summary_text": summary})
+        out = {"summary_text": summary}
+        if bt:
+            out["bt"] = bt
+        return RouteResponse(intent="recipe", payload=out)
 
     # ⭐ 非食譜：合併「食材詞」+「LLM keywords」
     ing_kws = _extract_keywords_via_db_jieba(text)  # 會可靠抓出「高麗菜」這類食材
